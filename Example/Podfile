@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'AssetPlayer_Example' do
+  pod 'AssetPlayer', :path => '../'
+
+  target 'AssetPlayer_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

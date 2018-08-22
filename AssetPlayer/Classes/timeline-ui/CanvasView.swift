@@ -25,21 +25,21 @@ extension CanvasFrameSizes {
     var rawValue: RawValue {
         switch self {
         case ._1x1(let frameSize):
-            return CGSize(width: 1, height: 1).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 1, height: 1), boundingSize: frameSize)
         case ._16x9(let frameSize):
-            return CGSize(width: 16, height: 9).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 16, height: 9), boundingSize: frameSize)
         case ._9x16(let frameSize):
-            return CGSize(width: 9, height: 16).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 9, height: 16), boundingSize: frameSize)
         case ._3x4(let frameSize):
-            return CGSize(width: 3, height: 4).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 3, height: 4), boundingSize: frameSize)
         case ._4x3(let frameSize):
-            return CGSize(width: 4, height: 3).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 4, height: 3), boundingSize: frameSize)
         case ._1x2(let frameSize):
-            return CGSize(width: 1, height: 2).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 1, height: 2), boundingSize: frameSize)
         case ._2x1(let frameSize):
-            return CGSize(width: 2, height: 1).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 2, height: 1), boundingSize: frameSize)
         case .twitter(let frameSize):
-            return CGSize(width: 1280, height: 1024).aspectFit(to: frameSize)
+            return CGSize.aspectFit(aspectRatio: CGSize(width: 1280, height: 1024), boundingSize: frameSize)
         }
     }
 }

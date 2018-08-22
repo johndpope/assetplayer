@@ -68,25 +68,28 @@ public enum AssetPlayerPlaybackState: Equatable {
  */
 private var AssetPlayerKVOContext = 0
 
-public class AssetPlayer: NSObject {
-    // MARK: Properties
+extension AssetPlayer {
+    private struct Constants {
+        // Keys required for a playable item
+        static let AssetKeysRequiredToPlay = [
+            "playable",
+            "hasProtectedContent"
+        ]
+    }
+}
 
+public class AssetPlayer: NSObject {
     /// Player delegate.
     public weak var playerDelegate: AssetPlayerDelegate?
-
-    // Attempt load and test these asset keys before playing.
-    static let assetKeysRequiredToPlay = [
-        "playable",
-        "hasProtectedContent"
-    ]
-
-    @objc public let player = AVPlayer()
-
+    
+    // MARK: Options
     public var isPlayingLocalVideo = false
     public var startTimeForLoop: Double = 0
-
+    
+    // MARK: Properties
+    @objc public let player = AVPlayer()
+    
     // Mark: Time Properties
-
     public var currentTime: Double = 0 {
         didSet {
             //@TODO: may not need playback did end here
@@ -103,14 +106,13 @@ public class AssetPlayer: NSObject {
         }
     }
 
+    // Mark: Computed Properties
     public var timeElapsedText: String = ""
     public var durationText: String = ""
 
     public var timeLeftText: String {
-        get {
-            let timeLeft = duration - currentTime
-            return self.createTimeString(time: Float(timeLeft))
-        }
+        let timeLeft = duration - currentTime
+        return self.createTimeString(time: Float(timeLeft))
     }
 
     public var maxSecondValue: Float = 0
@@ -158,10 +160,6 @@ public class AssetPlayer: NSObject {
         }
     }
 
-    private var playerLayer: AVPlayerLayer? {
-        return playerView?.playerLayer
-    }
-
     /*
      A token obtained from calling `player`'s `addPeriodicTimeObserverForInterval(_:queue:usingBlock:)`
      method.
@@ -191,9 +189,7 @@ public class AssetPlayer: NSObject {
             player.replaceCurrentItem(with: self.playerItem)
         }
     }
-
-    public var playerView: PlayerView? = PlayerView(frame: .zero)
-
+    
     /// The instance of `MPNowPlayingInfoCenter` that is used for updating metadata for the currently playing `Asset`.
     fileprivate let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
 
@@ -214,7 +210,6 @@ public class AssetPlayer: NSObject {
         guard let state = self.state else { return }
         switch state {
         case .setup(let asset):
-            self.setupAVAudioSession()
             self.asset = asset
             break
         case .playing:
@@ -289,9 +284,6 @@ public class AssetPlayer: NSObject {
         addObserver(self, forKeyPath: #keyPath(AssetPlayer.player.rate), options: [.new, .initial], context: &AssetPlayerKVOContext)
         addObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.status), options: [.new, .initial], context: &AssetPlayerKVOContext)
 
-        // @TODO: why does removing this here allow us to add player to any view?
-//        playerView?.playerLayer.player = player
-
         self.setState(to: .setup(asset: asset))
 
         // Seconds time observer
@@ -334,7 +326,6 @@ public class AssetPlayer: NSObject {
         removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.rate), context: &AssetPlayerKVOContext)
         removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.status), context: &AssetPlayerKVOContext)
 
-        self.removeAVAudioSessionObservers()
         //@TODO: Simplify removing observers
         if playerItem != nil {
             self.removePlayerItemObservers()
@@ -343,13 +334,13 @@ public class AssetPlayer: NSObject {
 
     // MARK: - Asset Loading
 
-    func asynchronouslyLoadURLAsset(_ newAsset: Asset) {
+    private func asynchronouslyLoadURLAsset(_ newAsset: Asset) {
         /*
          Using AVAsset now runs the risk of blocking the current thread (the
          main UI thread) whilst I/O happens to populate the properties. It's
          prudent to defer our work until the properties we need have been loaded.
          */
-        newAsset.urlAsset.loadValuesAsynchronously(forKeys: AssetPlayer.assetKeysRequiredToPlay) {
+        newAsset.urlAsset.loadValuesAsynchronously(forKeys: Constants.AssetKeysRequiredToPlay) {
             /*
              The asset invokes its completion handler on an arbitrary queue.
              To avoid multiple threads using our internal state at the same time
@@ -367,7 +358,7 @@ public class AssetPlayer: NSObject {
                  Test whether the values of each of the keys we need have been
                  successfully loaded.
                  */
-                for key in AssetPlayer.assetKeysRequiredToPlay {
+                for key in Constants.AssetKeysRequiredToPlay {
                     var error: NSError?
 
                     if newAsset.urlAsset.statusOfValue(forKey: key, error: &error) == .failed {
@@ -403,8 +394,6 @@ public class AssetPlayer: NSObject {
     }
 
     // MARK: - KVO Observation
-
-    // Update our UI when player or `player.currentItem` changes.
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // Make sure the this KVO callback was intended for this view controller.
         guard context == &AssetPlayerKVOContext else {
@@ -436,7 +425,7 @@ public class AssetPlayer: NSObject {
             self.durationText = createTimeString(time: Float(newDurationSeconds))
 
             self.playerDelegate?.playerIsSetup(self)
-            self.updateGeneralMetadata()
+//            self.updateGeneralMetadata()
         }
         else if keyPath == #keyPath(AssetPlayer.player.rate) {
             // Update `playPauseButton` image.
@@ -451,7 +440,7 @@ public class AssetPlayer: NSObject {
             // @TODO: What to do with player rate?
             // Update Metadata
             // @TODO: How many times here?
-            self.updatePlaybackRateMetadata()
+//            self.updatePlaybackRateMetadata()
         }
         else if keyPath == #keyPath(AssetPlayer.player.currentItem.status) {
             // Display an error if status becomes `.Failed`.
@@ -545,7 +534,7 @@ public class AssetPlayer: NSObject {
 
     // MARK: Notification Observing Methods
 
-    @objc func handleAVPlayerItemDidPlayToEndTimeNotification(notification: Notification) {
+    @objc private func handleAVPlayerItemDidPlayToEndTimeNotification(notification: Notification) {
         self.playerDelegate?.playerPlaybackDidEnd(self)
         self.state = .stopped
     }
@@ -568,25 +557,24 @@ public class AssetPlayer: NSObject {
 
 //        present(alert, animated: true, completion: nil)
     }
-
-    // MARK: Convenience
-
+    
+    // MARK: Time Formatting
     /*
      A formatter for individual date components used to provide an appropriate
      value for the `startTimeLabel` and `durationLabel`.
      */
-    let timeRemainingFormatter: DateComponentsFormatter = {
+    lazy var timeRemainingFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.zeroFormattingBehavior = .pad
         formatter.allowedUnits = [.minute, .second]
-
+        
         return formatter
     }()
-
-    func createTimeString(time: Float) -> String {
+    
+    private func createTimeString(time: Float) -> String {
         let components = NSDateComponents()
         components.second = Int(max(0.0, time))
-
+        
         return timeRemainingFormatter.string(from: components as DateComponents)!
     }
 }
@@ -617,49 +605,10 @@ extension AssetPlayer {
     public func stop() {
         self.state = .stopped
     }
-
-    /// Notification that is posted when the `nextTrack()` is called.
-    fileprivate static let nextTrackNotification = Notification.Name("nextTrackNotification")
-
-    /// Notification that is posted when the `previousTrack()` is called.
-    fileprivate static let previousTrackNotification = Notification.Name("previousTrackNotification")
-
-    func nextTrack() {
-        guard asset != nil else { return }
-
-        NotificationCenter.default.post(name: AssetPlayer.nextTrackNotification, object: nil, userInfo: ["AssetName": asset?.assetName ?? ""])
-    }
-
-    func previousTrack() {
-        guard asset != nil else { return }
-
-        NotificationCenter.default.post(name: AssetPlayer.previousTrackNotification, object: nil, userInfo: ["AssetName": asset?.assetName ?? ""])
-    }
-
-    public func skipForward(_ interval: TimeInterval) {
-        guard asset != nil else { return }
-
-        let currentTime = self.player.currentTime()
-        let offset = CMTimeMakeWithSeconds(interval, 1)
-
-        let newTime = CMTimeAdd(currentTime, offset)
-        self.seekTo(newTime)
-    }
-
-    public func skipBackward(_ interval: TimeInterval) {
-        guard asset != nil else { return }
-
-        let currentTime = self.player.currentTime()
-        let offset = CMTimeMakeWithSeconds(interval, 1)
-
-        let newTime = CMTimeSubtract(currentTime, offset)
-        self.seekTo(newTime)
-    }
-
+    
     public func seekTo(_ newPosition: CMTime) {
         guard asset != nil else { return }
         self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { (_) in
-            self.updatePlaybackRateMetadata()
             //            self.checkPaused()
         })
     }
@@ -668,7 +617,6 @@ extension AssetPlayer {
         guard asset != nil else { return }
         let newPosition = CMTimeMakeWithSeconds(interval, 600)
         self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: { (_) in
-            self.updatePlaybackRateMetadata()
             //            self.checkPaused()
         })
     }
@@ -679,24 +627,6 @@ extension AssetPlayer {
         DispatchQueue.main.async {
             self.rate = newRate
         }
-    }
-
-    public func beginRewind() {
-        guard asset != nil else { return }
-
-        rate = max(player.rate - 2.0, -2.0)
-    }
-
-    public func beginFastForward() {
-        guard asset != nil else { return }
-
-        rate = min(player.rate + 2.0, 2.0)
-    }
-
-    public func endRewindFastForward() {
-        guard asset != nil else { return }
-
-        rate = 1.0
     }
 }
 
@@ -718,127 +648,3 @@ extension AssetPlayer {
         playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.loadedTimeRanges), context: &AssetPlayerKVOContext)
     }
 }
-
-// MARK: MPNowPlayingInforCenter Management Methods
-extension AssetPlayer {
-    func updateGeneralMetadata() {
-        guard self.player.currentItem != nil, let urlAsset = self.player.currentItem?.asset else {
-            nowPlayingInfoCenter.nowPlayingInfo = nil
-
-            return
-        }
-
-        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
-
-        let title = AVMetadataItem.metadataItems(from: urlAsset.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: AVMetadataKeySpace.common).first?.value as? String ?? asset?.assetName
-        let album = AVMetadataItem.metadataItems(from: urlAsset.commonMetadata, withKey: AVMetadataKey.commonKeyAlbumName, keySpace: AVMetadataKeySpace.common).first?.value as? String ?? ""
-        var artworkData = AVMetadataItem.metadataItems(from: urlAsset.commonMetadata, withKey: AVMetadataKey.commonKeyArtwork, keySpace: AVMetadataKeySpace.common).first?.value as? Data ?? Data()
-        if let url = asset?.artworkURL {
-            if let data = try? Data(contentsOf: url) {
-                artworkData = data
-            }
-        }
-
-        let image = UIImage(data: artworkData) ?? UIImage()
-        var artwork = MPMediaItemArtwork(image: image)
-        if #available(iOS 10.0, *) {
-            artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: {  (_) -> UIImage in
-                return image
-            })
-        }
-
-        nowPlayingInfo[MPMediaItemPropertyTitle] = title
-        nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = album
-        nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
-
-        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
-    }
-
-    func updatePlaybackRateMetadata() {
-        guard self.player.currentItem != nil else {
-            nowPlayingInfoCenter.nowPlayingInfo = nil
-
-            return
-        }
-
-        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = CMTimeGetSeconds(self.player.currentItem!.currentTime())
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = self.player.rate
-        nowPlayingInfo[MPNowPlayingInfoPropertyDefaultPlaybackRate] = self.player.rate
-
-        nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
-    }
-}
-
-// MARK: - AudioSession
-extension AssetPlayer {
-    @objc func handleAudioSessionInterruption(notification: Notification) {
-        guard let userInfo = notification.userInfo, let typeInt = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let interruptionType = AVAudioSessionInterruptionType(rawValue: typeInt) else { return }
-
-        switch interruptionType {
-        case .began:
-            self.state = .interrupted
-        case .ended:
-            do {
-                try AVAudioSession.sharedInstance().setActive(true, with: [])
-
-                if shouldResumePlaybackAfterInterruption == false {
-                    shouldResumePlaybackAfterInterruption = true
-
-                    return
-                }
-
-                guard let optionsInt = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
-
-                let interruptionOptions = AVAudioSessionInterruptionOptions(rawValue: optionsInt)
-
-                if interruptionOptions.contains(.shouldResume) {
-                    play()
-                }
-            }
-            catch {
-                print("An Error occured activating the audio session while resuming from interruption: \(error)")
-            }
-        }
-    }
-
-    func setupAVAudioSession() {
-        // Setup AVAudioSession to indicate to the system you how intend to play audio.
-        let audioSession = AVAudioSession.sharedInstance()
-
-        self.addAVAudioSessionObservers()
-
-        do {
-            if #available(iOS 10.0, *) {
-                try audioSession.setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault)
-            } else {
-                // Fallback on earlier versions
-                try audioSession.setCategory(AVAudioSessionCategoryPlayback)
-            }
-        }
-        catch {
-            print("An error occured setting the audio session category: \(error)")
-        }
-
-        // Set the AVAudioSession as active.  This is required so that your application becomes the "Now Playing" app.
-        do {
-            try audioSession.setActive(true)
-        }
-        catch {
-            print("An Error occured activating the audio session: \(error)")
-        }
-    }
-
-    func addAVAudioSessionObservers() {
-        // Add the notification observer needed to respond to audio interruptions.
-        NotificationCenter.default.addObserver(self, selector: #selector(self.handleAudioSessionInterruption(notification:)), name: .AVAudioSessionInterruption, object: AVAudioSession.sharedInstance())
-    }
-
-    func removeAVAudioSessionObservers() {
-        // Remove audio session interruption observer
-        NotificationCenter.default.removeObserver(self, name: .AVAudioSessionInterruption, object: AVAudioSession.sharedInstance())
-    }
-}
-

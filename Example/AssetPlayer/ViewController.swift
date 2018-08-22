@@ -17,7 +17,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         let videoPlayerView = VideoPlayerView(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
-videoPlayerView.backgroundColor = .blue
+        videoPlayerView.backgroundColor = .blue
         let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_1mb", withExtension: "mp4")!
         let testVideo = VideoAsset(assetName: "", url: videoURL)
         videoPlayerView.setupPlayer(with: testVideo)

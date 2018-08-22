@@ -9,36 +9,24 @@
 import Foundation
 import AVFoundation
 
-public class Asset {
-    // MARK: Types
-    static let nameKey = "AssetName"
-    
-    // MARK: Properties
-    
+protocol AssetProtocol {
     /// The name of the asset to present in the application.
-    public var assetName: String = ""
-    
-    // Custom artwork
-    public var artworkURL: URL? = nil
-    
+    var assetName: String { get }
+    // Custom artwork that shows in remote view
+    var artworkURL: URL? { get }
     /// The `AVURLAsset` corresponding to an asset in either the application bundle or on the Internet.
+    var urlAsset: AVURLAsset { get }
+}
+
+public struct Asset: AssetProtocol {
+    public var assetName: String
+    public var artworkURL: URL?
     public var urlAsset: AVURLAsset
     
-    public var savedTime: Float = 0 // This is in seconds
-    
-    // @TODO: Idk if CMTime is the right thing to use
-    public var savedCMTime: CMTime {
-        get {
-            return CMTimeMake(Int64(savedTime), 1)
-        }
-    }
-    
-    public init(assetName: String, url: URL, artworkURL: URL? = nil, savedTime: Float = 0) {
+    public init(assetName: String = "", url: URL, artworkURL: URL? = nil) {
         self.assetName = assetName
-        let avURLAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
-        self.urlAsset = avURLAsset
+        self.urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
         self.artworkURL = artworkURL
-        self.savedTime = savedTime
     }
 }
 
@@ -65,7 +53,11 @@ extension TimePoints: Equatable {
     }
 }
 
-public class VideoAsset: Asset {
+public struct VideoAsset: AssetProtocol {
+    var assetName: String
+    var artworkURL: URL?
+    var urlAsset: AVURLAsset
+    
     public var timePoints: TimePoints = TimePoints(startTime: kCMTimeZero, endTime: kCMTimeZero)
 
     public var timeRange: CMTimeRange {
@@ -77,21 +69,21 @@ public class VideoAsset: Asset {
 
     public var framerate: Double? {
         guard let track = self.urlAsset.getFirstVideoTrack() else {
-            assertionFailure("No first video track")
+            print("No first video track")
             return nil
         }
 
         return Double(track.nominalFrameRate)
     }
 
-    public init(assetName: String, url: URL) {
-        super.init(assetName: assetName, url: url)
+    public init(assetName: String = "", url: URL) {
+        self.assetName = assetName
+        self.urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
 
         let timePoints = TimePoints(startTime: kCMTimeZero, endTime: self.urlAsset.duration)
         self.timePoints = timePoints
     }
 
-    // @TODO: What is a good timescale to use? Does the timescale need to depend on framerate?
     public func setStartime(to time: Double) {
         let cmTime = CMTimeMakeWithSeconds(time, 600)
         self.timePoints.startTime = cmTime

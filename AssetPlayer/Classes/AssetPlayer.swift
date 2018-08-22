@@ -80,7 +80,7 @@ public class AssetPlayer: NSObject {
         "hasProtectedContent"
     ]
 
-    @objc let player = AVPlayer()
+    @objc public let player = AVPlayer()
 
     public var isPlayingLocalVideo = false
     public var startTimeForLoop: Double = 0
@@ -396,11 +396,7 @@ public class AssetPlayer: NSObject {
                  */
                 self.playerItem = AVPlayerItem(asset: newAsset.urlAsset)
                 // Set time pitch algorithm to spectral allows the audio to speed up to 3.0
-
-                if newAsset.savedTime != 0 {
-                    self.seekTo(newAsset.savedCMTime)
-                }
-
+                
                 self.playerDelegate?.currentAssetDidChange(self)
             }
         }
@@ -622,7 +618,6 @@ extension AssetPlayer {
         self.state = .stopped
     }
 
-    //@TODO: Do we need other notifications for RemoteCommand
     /// Notification that is posted when the `nextTrack()` is called.
     fileprivate static let nextTrackNotification = Notification.Name("nextTrackNotification")
 
@@ -632,13 +627,13 @@ extension AssetPlayer {
     func nextTrack() {
         guard asset != nil else { return }
 
-        NotificationCenter.default.post(name: AssetPlayer.nextTrackNotification, object: nil, userInfo: [Asset.nameKey: asset?.assetName ?? ""])
+        NotificationCenter.default.post(name: AssetPlayer.nextTrackNotification, object: nil, userInfo: ["AssetName": asset?.assetName ?? ""])
     }
 
     func previousTrack() {
         guard asset != nil else { return }
 
-        NotificationCenter.default.post(name: AssetPlayer.previousTrackNotification, object: nil, userInfo: [Asset.nameKey: asset?.assetName ?? ""])
+        NotificationCenter.default.post(name: AssetPlayer.previousTrackNotification, object: nil, userInfo: ["AssetName": asset?.assetName ?? ""])
     }
 
     public func skipForward(_ interval: TimeInterval) {

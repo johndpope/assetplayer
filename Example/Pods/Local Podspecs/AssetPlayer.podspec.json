@@ -18,5 +18,10 @@
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "AssetPlayer/Classes/**/*"
+  "source_files": "AssetPlayer/Classes/**/*",
+  "dependencies": {
+    "SwifterSwift": [
+
+    ]
+  }
 }

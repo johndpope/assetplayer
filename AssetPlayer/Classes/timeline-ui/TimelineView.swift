@@ -40,9 +40,9 @@ class TimelineView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func addLayerView(with layer: EditableLayer) {
-        self.layerScrollerView.addLayerView(with: layer)
-    }
+//    public func addLayerView(with layer: EditableLayer) {
+//        self.layerScrollerView.addLayerView(with: layer)
+//    }
 
     public func handleTracking(for time: Double) {
         self.layerScrollerView.handleTracking(for: time)

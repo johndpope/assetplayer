@@ -493,6 +493,7 @@ extension VideoExportManager {
             scaledHeight = asset.frame.height * widthMultiplier
         }
 
+        
         let transform = CGAffineTransform(from: CGRect(x: 0, y: 0, width: assetTrack.naturalSize.width, height: assetTrack.naturalSize.height),
                                           toRect: CGRect(x: scaledX, y: scaledY, width: scaledWidth, height: scaledHeight))
         instruction.setTransform(transform, at: kCMTimeZero)
@@ -516,6 +517,13 @@ extension VideoExportManager {
 //        }
 //        return (assetOrientation, isPortrait)
 //    }
+}
+
+public extension CGAffineTransform {
+    init(from: CGRect, toRect to: CGRect) {
+        self.init(translationX: to.minX-from.minX, y: to.minY-from.minY)
+        self = self.scaledBy(x: to.width/from.width, y: to.height/from.height)
+    }
 }
 
 extension VideoExportManager {

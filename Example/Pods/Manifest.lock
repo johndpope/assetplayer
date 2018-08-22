@@ -1,15 +1,38 @@
 PODS:
-  - AssetPlayer (0.1.0)
+  - AssetPlayer (0.1.0):
+    - SwifterSwift
+  - SwifterSwift (4.4.0):
+    - SwifterSwift/AppKit (= 4.4.0)
+    - SwifterSwift/CoreGraphics (= 4.4.0)
+    - SwifterSwift/CoreLocation (= 4.4.0)
+    - SwifterSwift/Foundation (= 4.4.0)
+    - SwifterSwift/MapKit (= 4.4.0)
+    - SwifterSwift/SpriteKit (= 4.4.0)
+    - SwifterSwift/SwiftStdlib (= 4.4.0)
+    - SwifterSwift/UIKit (= 4.4.0)
+  - SwifterSwift/AppKit (4.4.0)
+  - SwifterSwift/CoreGraphics (4.4.0)
+  - SwifterSwift/CoreLocation (4.4.0)
+  - SwifterSwift/Foundation (4.4.0)
+  - SwifterSwift/MapKit (4.4.0)
+  - SwifterSwift/SpriteKit (4.4.0)
+  - SwifterSwift/SwiftStdlib (4.4.0)
+  - SwifterSwift/UIKit (4.4.0)
 
 DEPENDENCIES:
   - AssetPlayer (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - SwifterSwift
 
 EXTERNAL SOURCES:
   AssetPlayer:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AssetPlayer: 8b67307cbb39446c6845a20ddc2d462fc12ae05b
+  AssetPlayer: c98c4b5485e6848db01b16cddea7cfdee4a2b322
+  SwifterSwift: 1ce0e31801ddd3a2bd3256626275425adb01067a
 
 PODFILE CHECKSUM: 05ffe3588678bbf3740788f43925cfaed354f90d
 

@@ -1,0 +1,16 @@
+PODS:
+  - AssetPlayer (0.1.0)
+
+DEPENDENCIES:
+  - AssetPlayer (from `../`)
+
+EXTERNAL SOURCES:
+  AssetPlayer:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  AssetPlayer: 8b67307cbb39446c6845a20ddc2d462fc12ae05b
+
+PODFILE CHECKSUM: 05ffe3588678bbf3740788f43925cfaed354f90d
+
+COCOAPODS: 1.5.3

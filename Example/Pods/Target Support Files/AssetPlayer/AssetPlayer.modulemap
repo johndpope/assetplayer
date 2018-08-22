@@ -1,0 +1,6 @@
+framework module AssetPlayer {
+  umbrella header "AssetPlayer-umbrella.h"
+
+  export *
+  module * { export * }
+}

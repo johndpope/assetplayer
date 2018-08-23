@@ -9,40 +9,41 @@
 import Foundation
 import AVFoundation
 
-protocol AssetProtocol {
-    /// The name of the asset to present in the application.
-    var assetName: String { get }
-    // Custom artwork that shows in remote view
-    var artworkURL: URL? { get }
+public protocol AssetProtocol {
     /// The `AVURLAsset` corresponding to an asset in either the application bundle or on the Internet.
     var urlAsset: AVURLAsset { get }
 }
 
+// MARK: Asset
+
 public struct Asset: AssetProtocol {
-    public var assetName: String
-    public var artworkURL: URL?
     public var urlAsset: AVURLAsset
     
-    public init(assetName: String = "", url: URL, artworkURL: URL? = nil) {
-        self.assetName = assetName
+    public init(url: URL) {
         self.urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
-        self.artworkURL = artworkURL
     }
 }
 
-extension Asset: Equatable {
-    public static func == (lhs: Asset, rhs: Asset) -> Bool {
-        return lhs.assetName == rhs.assetName && lhs.urlAsset == lhs.urlAsset
+// MARK: Video Asset
+
+public struct TimePoints {
+    public let startTime: CMTime
+    public let endTime: CMTime
+    
+    public var startTimeInSeconds: Double {
+        return startTime.seconds
     }
-}
-
-public class TimePoints {
-    public var startTime: CMTime
-    public var endTime: CMTime
-
-    init(startTime: CMTime, endTime: CMTime) {
-        self.startTime = startTime
-        self.endTime = endTime
+    
+    public var endTimeInSeconds: Double {
+        return endTime.seconds
+    }
+    
+    public func withChangingStartTime(to startTime: CMTime) -> TimePoints {
+        return TimePoints(startTime: startTime, endTime: endTime)
+    }
+    
+    public func withChangingEndTime(to endTime: CMTime) -> TimePoints {
+        return TimePoints(startTime: startTime, endTime: endTime)
     }
 }
 
@@ -54,56 +55,77 @@ extension TimePoints: Equatable {
 }
 
 public struct VideoAsset: AssetProtocol {
-    var assetName: String
-    var artworkURL: URL?
-    var urlAsset: AVURLAsset
+    public let urlAsset: AVURLAsset
+    /// Start and End times for export
+    public let timePoints: TimePoints
+    /// frame of video to be exported
+    public let frame: CGRect
     
-    public var timePoints: TimePoints = TimePoints(startTime: kCMTimeZero, endTime: kCMTimeZero)
-
-    public var timeRange: CMTimeRange {
-        let duration = timePoints.endTime - timePoints.startTime
-        return CMTimeRangeMake(timePoints.startTime, duration)
-    }
-
-    public var frame: CGRect = .zero
-
+    /// Framerate of Video
     public var framerate: Double? {
         guard let track = self.urlAsset.getFirstVideoTrack() else {
             print("No first video track")
             return nil
         }
-
+        
         return Double(track.nominalFrameRate)
     }
-
-    public init(assetName: String = "", url: URL) {
-        self.assetName = assetName
-        self.urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
-
-        let timePoints = TimePoints(startTime: kCMTimeZero, endTime: self.urlAsset.duration)
+    
+    public var timeRange: CMTimeRange {
+        let duration = timePoints.endTime - timePoints.startTime
+        return CMTimeRangeMake(timePoints.startTime, duration)
+    }
+    
+    public var duration: Double {
+        return (timePoints.endTime - timePoints.startTime).seconds
+    }
+    
+    public init(urlAsset: AVURLAsset,
+                timePoints: TimePoints,
+                frame: CGRect = .zero) {
+        self.urlAsset = urlAsset
         self.timePoints = timePoints
+        self.frame = frame
+    }
+    
+    public init(url: URL) {
+        let urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
+        let timePoints = TimePoints(startTime: kCMTimeZero, endTime: urlAsset.duration)
+        self.init(urlAsset: urlAsset, timePoints: timePoints)
     }
 
-    public func setStartime(to time: Double) {
+    public func changeStartTime(to time: Double) -> VideoAsset {
         let cmTime = CMTimeMakeWithSeconds(time, 600)
-        self.timePoints.startTime = cmTime
+        
+        guard time > 0 else {
+            return VideoAsset(urlAsset: self.urlAsset,
+                              timePoints: self.timePoints.withChangingStartTime(to: kCMTimeZero),
+                              frame: self.frame)
+        }
+        
+        return VideoAsset(urlAsset: self.urlAsset,
+                          timePoints: self.timePoints.withChangingStartTime(to: cmTime),
+                          frame: self.frame)
     }
 
-    public func setEndTime(to time: Double) {
+    public func changeEndTime(to time: Double) -> VideoAsset {
         let cmTime = CMTimeMakeWithSeconds(time, 600)
-
-        if cmTime > self.urlAsset.duration {
-            self.timePoints.endTime = self.urlAsset.duration
-            return
+        
+        guard cmTime < self.urlAsset.duration else {
+            return VideoAsset(urlAsset: self.urlAsset,
+                              timePoints: self.timePoints.withChangingEndTime(to: self.urlAsset.duration),
+                              frame: self.frame)
         }
 
-        self.timePoints.endTime = cmTime
+        return VideoAsset(urlAsset: self.urlAsset,
+                          timePoints: self.timePoints.withChangingEndTime(to: cmTime),
+                          frame: self.frame)
     }
 }
 
-extension AssetPlayer {
-    convenience init(videoAsset: VideoAsset) {
-        let asset = Asset(assetName: videoAsset.assetName, url: videoAsset.urlAsset.url)
-        self.init(asset: asset)
+// MARK: AV Extension Getters
+extension VideoAsset {
+    public func getAllFramesAsUIImages() -> [UIImage]? {
+        return self.urlAsset.getAllFramesAsUIImages()
     }
 }

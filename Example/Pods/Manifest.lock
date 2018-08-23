@@ -1,6 +1,10 @@
 PODS:
   - AssetPlayer (0.1.0):
+    - Nimble
+    - Quick
     - SwifterSwift
+  - Nimble (7.1.3)
+  - Quick (1.3.0)
   - SwifterSwift (4.4.0):
     - SwifterSwift/AppKit (= 4.4.0)
     - SwifterSwift/CoreGraphics (= 4.4.0)
@@ -24,6 +28,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Nimble
+    - Quick
     - SwifterSwift
 
 EXTERNAL SOURCES:
@@ -31,7 +37,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AssetPlayer: c98c4b5485e6848db01b16cddea7cfdee4a2b322
+  AssetPlayer: 55dcdc2277cab98c3782c9aa4a98e0eac2d7a2b3
+  Nimble: 2839b01d1b31f6a6a7777a221f0d91cf52e8e27b
+  Quick: 03278013f71aa05fe9ecabc94fbcc6835f1ee76f
   SwifterSwift: 1ce0e31801ddd3a2bd3256626275425adb01067a
 
 PODFILE CHECKSUM: 05ffe3588678bbf3740788f43925cfaed354f90d

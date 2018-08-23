@@ -12,7 +12,7 @@ import UIKit
 extension AVAsset {
     public func getFirstVideoTrack() -> AVAssetTrack? {
         guard let track = self.tracks(withMediaType: AVMediaType.video).first else {
-            assertionFailure("Failure getting first track")
+            assertionFailure("AVAsset: " + "Failure getting first track")
             return nil
         }
         let videoTrack: AVAssetTrack = track as AVAssetTrack

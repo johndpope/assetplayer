@@ -22,6 +22,12 @@
   "dependencies": {
     "SwifterSwift": [
 
+    ],
+    "Quick": [
+
+    ],
+    "Nimble": [
+
     ]
   }
 }

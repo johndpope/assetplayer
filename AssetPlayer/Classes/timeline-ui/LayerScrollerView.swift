@@ -192,8 +192,9 @@ class FrameLayerView: UIView {
     required init(framerate: Double, videoDuration: Double, videoFrameWidth: CGFloat, videoFrameHeight: CGFloat) {
         super.init(frame: .zero)
 
+        // @TODO: Remove test video
         let videoURL: URL = Bundle.main.url(forResource: "outputfile", withExtension: "mp4")!
-        let video = VideoAsset(assetName: "vert", url: videoURL)
+        let video = VideoAsset(url: videoURL)
 
         guard let images = video.urlAsset.getAllFramesAsUIImages() else {
             assertionFailure("dont get here")

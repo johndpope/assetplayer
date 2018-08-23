@@ -23,10 +23,10 @@ public class VideoPlayerView: UIView {
 //    }
 
     public func setupPlayer(with video: VideoAsset) {
-        self.assetPlayer = AssetPlayer(videoAsset: video)
+        self.assetPlayer = AssetPlayer()
         self.assetPlayer?.isPlayingLocalVideo = true
         self.assetPlayer?.shouldLoop = true
-        self.assetPlayer?.pause()
+        self.assetPlayer?.perform(action: .setup(with: video))
 
 //        self.playerView = assetPlayer?.playerView
         playerView?.frame = self.frame

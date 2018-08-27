@@ -121,13 +121,12 @@ class AssetPlayerSpec: QuickSpec {
             // Minimum time it should take to setup remote video
             let minimumSetupTime: Double = 8
             
-            // @TODO: Setup specific remote test videos
             var thirtySecondAsset: VideoAsset {
-                return VideoAsset(url: URL(string: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4")!)
+                return VideoAsset(url: URL(string: "https://s3-us-west-2.amazonaws.com/curago-binaries/test_assets/videos/SampleVideo_1280x720_5mb.mp4")!)
             }
             
             var fiveSecondAsset: VideoAsset {
-                return VideoAsset(url: URL(string: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4")!)
+                return VideoAsset(url: URL(string: "https://s3-us-west-2.amazonaws.com/curago-binaries/test_assets/videos/SampleVideo_1280x720_1mb.mp4")!)
             }
             
             var assetPlayer: AssetPlayer!
@@ -174,7 +173,7 @@ class AssetPlayerSpec: QuickSpec {
                 it("should have FINISHED state") {
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.setup(asset: fiveSecondAsset)))
                     assetPlayer.perform(action: .play)
-                    expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.finished), timeout: minimumSetupTime + 8)
+                    expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.finished), timeout: minimumSetupTime + 20)
                 }
                 
                 it("should continue looping after finishing") {

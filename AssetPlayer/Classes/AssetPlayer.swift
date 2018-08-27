@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import MediaPlayer
+import SwifterSwift
 
 public protocol AssetPlayerDelegate: class {
     // Setup
@@ -48,7 +49,7 @@ public enum AssetPlayerPlaybackState: Equatable {
             return true
         case (.interrupted, .interrupted):
             return true
-        case (.failed(let lKey), .failed(let rKey)):
+        case (.failed(_), .failed(_)):
             return true
         case (.buffering, .buffering):
             return true
@@ -90,7 +91,7 @@ public class AssetPlayer: NSObject {
     // Mark: Time Properties
     public var currentTime: Double = 0
 
-    public var bufferedTime: Float = 0 {
+    public var bufferedTime: Double = 0 {
         didSet {
             self.delegate?.playerBufferTimeDidChange(self)
         }
@@ -184,13 +185,13 @@ public class AssetPlayer: NSObject {
      */
     private var timeObserverTokenMilliseconds: Any?
     
+    public var previousState: AssetPlayerPlaybackState
+    
     /// The state that the internal `AVPlayer` is in.
     public var state: AssetPlayerPlaybackState {
         didSet {
-            guard state != oldValue else {
-                return
-            }
-            
+            guard state != oldValue else { return }
+            self.previousState = oldValue
             self.handleStateChange(state)
         }
     }
@@ -198,6 +199,7 @@ public class AssetPlayer: NSObject {
     // MARK: - Life Cycle
     public init(isPlayingLocalAsset: Bool, shouldLoop: Bool) {
         self.state = .none
+        self.previousState = .none
         self.isPlayingLocalAsset = isPlayingLocalAsset
         self.shouldLoop = shouldLoop
     }
@@ -432,18 +434,21 @@ extension AssetPlayer {
             if let item = self.avPlayerItem {
                 let timeRanges = item.loadedTimeRanges
                 if let timeRange = timeRanges.first?.timeRangeValue {
-                    let bufferedTime: Float = Float(CMTimeGetSeconds(CMTimeAdd(timeRange.start, timeRange.duration)))
-                    self.bufferedTime = Float(bufferedTime)
+                    let bufferedTime = Double(CMTimeGetSeconds(CMTimeAdd(timeRange.start, timeRange.duration)))
+                    self.bufferedTime = bufferedTime
+                    
                     // Smart Value check for buffered time to switch to playing state or to buffering state
-                    let smartValue = (bufferedTime - Float(self.currentTime)) > 5 || bufferedTime.rounded() == Float(self.currentTime.rounded())
+                    
+                    // Acceptable buffer is 10% of total asset duration
+                    let acceptableBufferedTime = self.duration * 0.10
+                    let smartValue = (bufferedTime - self.currentTime) > acceptableBufferedTime
                     
                     switch smartValue {
                     case true:
-                        // @TODO: commented out to not autoplay
-//                        if self.state != .buffering, self.state != .paused, self.state != .playing {
-//                            self.state = .playing
-//                        }
-                        break
+                        // Only switch to playing state if we are in buffering state and our previous state was playing
+                        if self.state == .buffering, previousState == .playing {
+                            self.state = previousState
+                        }
                     case false:
                         if self.state != .buffering, self.state != .paused {
                             self.state = .buffering

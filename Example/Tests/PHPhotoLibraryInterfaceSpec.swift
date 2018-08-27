@@ -14,7 +14,7 @@ class PHPhotoLibraryInterfaceSpec: QuickSpec {
     override func spec() {
         let videoUrlToSave = Bundle.main.url(forResource: "SampleVideo_1280x720_1mb", withExtension: "mp4")!
         
-        fdescribe("save local video file url to photos") {
+        xdescribe("save local video file url to photos") {
             it("should succeed") {
                 var success = false
                 

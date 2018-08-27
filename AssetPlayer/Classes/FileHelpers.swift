@@ -25,7 +25,7 @@ public class FileHelpers {
         }
         catch _ as NSError {
             // Assume file doesn't exist.
-            print("Can not find file to remove")
+            print("FileManager: Can not find file to remove")
         }
     }
 }

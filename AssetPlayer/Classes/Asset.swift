@@ -58,7 +58,7 @@ public struct VideoAsset: AssetProtocol {
     public let urlAsset: AVURLAsset
     /// Start and End times for export
     public let timePoints: TimePoints
-    /// frame of video to be exported
+    /// frame of video in relation to CanvasView to be exported
     public let frame: CGRect
     
     /// Framerate of Video
@@ -80,6 +80,10 @@ public struct VideoAsset: AssetProtocol {
         return (timePoints.endTime - timePoints.startTime).seconds
     }
     
+    public var durationInCMTime: CMTime {
+        return CMTimeMakeWithSeconds(self.duration, 600)
+    }
+    
     public init(urlAsset: AVURLAsset,
                 timePoints: TimePoints,
                 frame: CGRect = .zero) {
@@ -95,7 +99,7 @@ public struct VideoAsset: AssetProtocol {
     }
 
     public func changeStartTime(to time: Double) -> VideoAsset {
-        let cmTime = CMTimeMakeWithSeconds(time, 600)
+        let cmTime = CMTimeMakeWithSeconds(time, 1000)
         
         guard time > 0 else {
             return VideoAsset(urlAsset: self.urlAsset,
@@ -109,7 +113,7 @@ public struct VideoAsset: AssetProtocol {
     }
 
     public func changeEndTime(to time: Double) -> VideoAsset {
-        let cmTime = CMTimeMakeWithSeconds(time, 600)
+        let cmTime = CMTimeMakeWithSeconds(time, 1000)
         
         guard cmTime < self.urlAsset.duration else {
             return VideoAsset(urlAsset: self.urlAsset,
@@ -120,6 +124,10 @@ public struct VideoAsset: AssetProtocol {
         return VideoAsset(urlAsset: self.urlAsset,
                           timePoints: self.timePoints.withChangingEndTime(to: cmTime),
                           frame: self.frame)
+    }
+    
+    public func withChangingFrame(to frame: CGRect) -> VideoAsset {
+        return VideoAsset(urlAsset: self.urlAsset, timePoints: self.timePoints, frame: frame)
     }
 }
 

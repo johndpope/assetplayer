@@ -23,9 +23,7 @@ public class VideoPlayerView: UIView {
 //    }
 
     public func setupPlayer(with video: VideoAsset) {
-        self.assetPlayer = AssetPlayer()
-        self.assetPlayer?.isPlayingLocalVideo = true
-        self.assetPlayer?.shouldLoop = true
+        self.assetPlayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
         self.assetPlayer?.perform(action: .setup(with: video))
 
 //        self.playerView = assetPlayer?.playerView

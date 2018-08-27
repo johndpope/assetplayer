@@ -8,13 +8,21 @@
 
 import UIKit
 import AssetPlayer
+import Photos
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     var videoPlayerView: VideoPlayerView!
+    
+    let imagePickerController = UIImagePickerController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.delegate = self
+        imagePickerController.mediaTypes = ["public.image", "public.movie"]
+        
+//        present(imagePickerController, animated: true, completion: nil)
 //        // Do any additional setup after loading the view, typically from a nib.
 //        let videoPlayerView = VideoPlayerView(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
 //        videoPlayerView.backgroundColor = .blue
@@ -37,6 +45,29 @@ class ViewController: UIViewController {
 //        pausebutton.backgroundColor = .red
 //
 //        self.view.addSubview(pausebutton)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        imagePickerController.dismiss(animated: true, completion: nil)
+        let mediaType = info[UIImagePickerControllerMediaType]
+        let videoURL = info[UIImagePickerControllerReferenceURL] as? URL
+        print(videoURL)
+        let vid = VideoAsset(url: videoURL!).changeEndTime(to: 5.0)
+        
+        VideoExporter.exportThemeVideo(with: vid,
+                                            cropViewFrame: CGRect(x: 0, y: 0, width: 720, height: 1280),
+                                            progress:
+            { (progress) in
+                print(progress)
+//                progressToCheck = progress
+        }, success: { returnedFileUrl in
+//            fileUrl = returnedFileUrl
+        }, failure: { (error) in
+//            expect(error).to(beNil())
+//            fail()
+        })
+        
+        
     }
 
     override func didReceiveMemoryWarning() {

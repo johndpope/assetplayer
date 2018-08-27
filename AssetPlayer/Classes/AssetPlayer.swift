@@ -49,7 +49,7 @@ public enum AssetPlayerPlaybackState: Equatable {
         case (.interrupted, .interrupted):
             return true
         case (.failed(let lKey), .failed(let rKey)):
-            return lKey?.localizedDescription == rKey?.localizedDescription
+            return true
         case (.buffering, .buffering):
             return true
         case (.finished, .finished):
@@ -83,9 +83,9 @@ public class AssetPlayer: NSObject {
     public weak var delegate: AssetPlayerDelegate?
     
     // MARK: Options
-    public var isPlayingLocalVideo = true
-    public var startTimeForLoop: Double = 0
-    public var shouldLoop: Bool = false
+    private var isPlayingLocalAsset: Bool
+    private var shouldLoop: Bool
+    private var startTimeForLoop: Double = 0
     
     // Mark: Time Properties
     public var currentTime: Double = 0
@@ -196,8 +196,10 @@ public class AssetPlayer: NSObject {
     }
     
     // MARK: - Life Cycle
-    public override init() {
+    public init(isPlayingLocalAsset: Bool, shouldLoop: Bool) {
         self.state = .none
+        self.isPlayingLocalAsset = isPlayingLocalAsset
+        self.shouldLoop = shouldLoop
     }
 
     deinit {
@@ -310,10 +312,8 @@ extension AssetPlayer {
         switch state {
         case .none:
             self.player.pause()
-            break
         case .setup(let asset):
             self.asset = asset
-            break
         case .playing:
             if #available(iOS 10.0, *) {
                 self.player.playImmediately(atRate: self.rate)
@@ -322,19 +322,14 @@ extension AssetPlayer {
                 self.player.rate = self.rate
                 self.player.play()
             }
-            break
         case .paused:
             self.player.pause()
-            break
         case .interrupted:
             self.player.pause()
-            break
         case .failed:
             self.player.pause()
-            break
         case .buffering:
             self.player.pause()
-            break
         case .finished:
             guard !shouldLoop else {
                 self.seekToTimeInSeconds(startTimeForLoop)
@@ -343,10 +338,6 @@ extension AssetPlayer {
             }
             
             self.player.pause()
-//            asset = nil
-//            playerItem = nil
-//            self.player.replaceCurrentItem(with: nil)
-            break
         }
     }
     
@@ -382,6 +373,10 @@ extension AssetPlayer {
             self.durationText = createTimeString(time: Float(newDurationSeconds))
             
             self.delegate?.playerIsSetup(self)
+            
+            if self.state != .playing, self.state != .paused, self.state != .buffering {
+                self.state = .none
+            }
         }
         else if keyPath == #keyPath(AssetPlayer.player.rate) {
             // Handle any player rate changes
@@ -406,10 +401,10 @@ extension AssetPlayer {
                 self.state = .failed(error: player.currentItem?.error)
             }
         }
-            // All Buffer observer values
+        // All Buffer observer values
         else if keyPath == #keyPath(AVPlayerItem.isPlaybackBufferEmpty) {
             // No need to use this keypath if we are playing local video
-            guard !isPlayingLocalVideo else { return }
+            guard !isPlayingLocalAsset else { return }
             
             // PlayerEmptyBufferKey
             if let item = self.avPlayerItem {
@@ -420,7 +415,7 @@ extension AssetPlayer {
         }
         else if keyPath == #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp) {
             // No need to use this keypath if we are playing local video
-            guard !isPlayingLocalVideo else { return }
+            guard !isPlayingLocalAsset else { return }
             
             // PlayerKeepUpKey
             if let item = self.avPlayerItem {
@@ -431,31 +426,29 @@ extension AssetPlayer {
         }
         else if keyPath == #keyPath(AVPlayerItem.loadedTimeRanges) {
             // No need to use this keypath if we are playing local video
-            guard !isPlayingLocalVideo else { return }
+            guard !isPlayingLocalAsset else { return }
             
             // PlayerLoadedTimeRangesKey
             if let item = self.avPlayerItem {
                 let timeRanges = item.loadedTimeRanges
                 if let timeRange = timeRanges.first?.timeRangeValue {
                     let bufferedTime: Float = Float(CMTimeGetSeconds(CMTimeAdd(timeRange.start, timeRange.duration)))
-                    // Smart Value check for buffered time to switch to playing state
-                    // or switch to buffering state
+                    self.bufferedTime = Float(bufferedTime)
+                    // Smart Value check for buffered time to switch to playing state or to buffering state
                     let smartValue = (bufferedTime - Float(self.currentTime)) > 5 || bufferedTime.rounded() == Float(self.currentTime.rounded())
                     
-                    //@TODO: Clean this up
                     switch smartValue {
                     case true:
-                        if self.state != .buffering, self.state != .paused, self.state != .playing {
-                            self.state = .playing
-                        }
+                        // @TODO: commented out to not autoplay
+//                        if self.state != .buffering, self.state != .paused, self.state != .playing {
+//                            self.state = .playing
+//                        }
                         break
                     case false:
-                        if self.state != .buffering && self.state != .paused {
+                        if self.state != .buffering, self.state != .paused {
                             self.state = .buffering
                         }
-                        break
                     }
-                    self.bufferedTime = Float(bufferedTime)
                 }
             }
         }
@@ -472,7 +465,6 @@ extension AssetPlayer {
     }
     
     // MARK: Notification Observing Methods
-    
     @objc private func handleAVPlayerItemDidPlayToEndTimeNotification(notification: Notification) {
         self.delegate?.playerPlaybackDidEnd(self)
         self.state = .finished
@@ -493,6 +485,12 @@ extension AssetPlayer {
             self.seekToTimeInSeconds(time)
         case .changePlayerPlaybackRate(let rate):
             self.changePlayerPlaybackRate(to: rate)
+        case .changeIsPlayingLocalAsset(let isPlayingLocalAsset):
+            self.isPlayingLocalAsset = isPlayingLocalAsset
+        case .changeShouldLoop(let shouldLoop):
+            self.shouldLoop = shouldLoop
+        case .changeStartTimeForLoop(let time):
+            self.startTimeForLoop = time
         }
     }
     
@@ -540,7 +538,7 @@ extension AssetPlayer {
 
     private func seekToTimeInSeconds(_ time: Double) {
         guard asset != nil else { return }
-        let newPosition = CMTimeMakeWithSeconds(time, 600)
+        let newPosition = CMTimeMakeWithSeconds(time, 1000)
         self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
     }
 
@@ -575,4 +573,7 @@ public enum AssetPlayerActions {
     case pause
     case seekToTimeInSeconds(time: Double)
     case changePlayerPlaybackRate(to: Float)
+    case changeIsPlayingLocalAsset(to: Bool)
+    case changeShouldLoop(to: Bool)
+    case changeStartTimeForLoop(to: Double)
 }

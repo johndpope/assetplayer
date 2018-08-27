@@ -21,6 +21,9 @@
 		128162DFE45AA577C7685396FFE77302 /* NMBStringify.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D053B6EF43A106DF2A0F8EC40A40A77 /* NMBStringify.m */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		13F4D827CC2B34D2858DA8E82CD5CA58 /* LocaleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6850E26CC463672219067D495F4D7210 /* LocaleExtensions.swift */; };
 		1501CE5BFAFFE1EC10AE1DE2F33ADF09 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3650A1C0B4300EF73855733FD0C20F /* Filter.swift */; };
+		16315CD72134908700B6BD13 /* VideoExporterOrientationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CD62134908700B6BD13 /* VideoExporterOrientationHelper.swift */; };
+		16315CD9213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CD8213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift */; };
+		16315CDB2134917700B6BD13 /* PHPhotoLibraryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDA2134917700B6BD13 /* PHPhotoLibraryInterface.swift */; };
 		16C039B8EDFD47112B2E2352ADD391F7 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53411A1B145BD747CB1083007DF5EDC /* DateExtensions.swift */; };
 		16E41B5D0B05252A73787B07E95F2275 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49150A68CD804E5F89B962995E7ED28 /* OptionalExtensions.swift */; };
 		1712A2A26026572C1A3D15FE406B738D /* ContainElementSatisfying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1272781C96F7D7953D8F0BC1A98C298D /* ContainElementSatisfying.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -158,7 +161,7 @@
 		B62FCD125AD6BD6E9A295A15C70E9AA6 /* RaisesException.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8007897B0BB79AD51072CCB256E3E999 /* RaisesException.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		B64F08DF06461DF849C88912E209B08D /* BoolExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7A15EB88A0759E60D33A6B4A6A4731 /* BoolExtensions.swift */; };
 		B78451F6F583BA697F769C1E7C90D048 /* StringProtocolExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93C005CFFAB33F202985E6BD1ED6E54 /* StringProtocolExtensions.swift */; };
-		B7D3F505D59FA51CCEE5D3132ADD4D8E /* VideoExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2A86851501C9DDEDB19788EF217E25 /* VideoExportManager.swift */; };
+		B7D3F505D59FA51CCEE5D3132ADD4D8E /* VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2A86851501C9DDEDB19788EF217E25 /* VideoExporter.swift */; };
 		B7EC513AB4B483B029E0FA5317BFD4CE /* DictionaryExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309A7D0F43173412CB175B12D19F2640 /* DictionaryExtensions.swift */; };
 		B9488D048A4FD274BA99257CE0943E77 /* mach_excServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F760610E02C0985F6C665EE8BD0AD470 /* mach_excServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B9A9E0862415D3D05AA84075EC0DFD96 /* UIAlertControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18718389004FA6F5E2567DDE6D4AB0D /* UIAlertControllerExtensions.swift */; };
@@ -294,6 +297,9 @@
 		14CA7771E96453A2AFEC6F089DD0DC9F /* Pods_AssetPlayer_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AssetPlayer_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		14F287C31BD91E257F58D2FCDC9FA0EF /* BeIdenticalTo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeIdenticalTo.swift; path = Sources/Nimble/Matchers/BeIdenticalTo.swift; sourceTree = "<group>"; };
 		160D90413C75404A376883C273B711B7 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		16315CD62134908700B6BD13 /* VideoExporterOrientationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporterOrientationHelper.swift; sourceTree = "<group>"; };
+		16315CD8213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGAffineTransform+VideoExporter.swift"; sourceTree = "<group>"; };
+		16315CDA2134917700B6BD13 /* PHPhotoLibraryInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPhotoLibraryInterface.swift; sourceTree = "<group>"; };
 		1689E972F3BC2C7822FAD747E3F2A00A /* ExpectationMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpectationMessage.swift; path = Sources/Nimble/ExpectationMessage.swift; sourceTree = "<group>"; };
 		1AA9019AE291609BCB2C3E85975300E7 /* Pods-AssetPlayer_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AssetPlayer_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		1C6ECD5CC30AD1D8B73E26FE0FD30CEB /* Pods-AssetPlayer_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AssetPlayer_Tests-resources.sh"; sourceTree = "<group>"; };
@@ -450,7 +456,7 @@
 		B6B9B2159C46762DBE4296B887C895DE /* AssertionDispatcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssertionDispatcher.swift; path = Sources/Nimble/Adapters/AssertionDispatcher.swift; sourceTree = "<group>"; };
 		B813CBF17B7C10871C86F8727934AF8A /* CwlCatchException.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = CwlCatchException.h; path = Carthage/Checkouts/CwlCatchException/Sources/CwlCatchExceptionSupport/include/CwlCatchException.h; sourceTree = "<group>"; };
 		B8C7628D1A3B1A76A9024EDC3DFAB4B8 /* CalendarExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CalendarExtensions.swift; path = Sources/Extensions/Foundation/CalendarExtensions.swift; sourceTree = "<group>"; };
-		BB2A86851501C9DDEDB19788EF217E25 /* VideoExportManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoExportManager.swift; path = AssetPlayer/Classes/VideoExportManager.swift; sourceTree = "<group>"; };
+		BB2A86851501C9DDEDB19788EF217E25 /* VideoExporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VideoExporter.swift; path = AssetPlayer/Classes/VideoExporter.swift; sourceTree = "<group>"; };
 		BB4AC9E75D076E3E9020BDF0F55B9264 /* UIStackViewExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIStackViewExtensions.swift; path = Sources/Extensions/UIKit/UIStackViewExtensions.swift; sourceTree = "<group>"; };
 		BC11D8D35053229958B3A8C0A1720C81 /* URLRequestExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = URLRequestExtensions.swift; path = Sources/Extensions/Foundation/URLRequestExtensions.swift; sourceTree = "<group>"; };
 		BD030790C06508FBBA456FFF765255B6 /* CGColorExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CGColorExtensions.swift; path = Sources/Extensions/CoreGraphics/CGColorExtensions.swift; sourceTree = "<group>"; };
@@ -964,12 +970,15 @@
 				57844B7FA0B0E9E41D5AFE00E65099C4 /* FileHelpers.swift */,
 				A92514B5EE9467CC43F1B170A9448CCF /* PlayerView.swift */,
 				02D80303EE3C4DBFE046320D30B9A8E9 /* VideoAsset.swift */,
-				BB2A86851501C9DDEDB19788EF217E25 /* VideoExportManager.swift */,
+				BB2A86851501C9DDEDB19788EF217E25 /* VideoExporter.swift */,
 				1F7E2D29E1EBEBD6A19704C9050F61DF /* VideoPlayerView.swift */,
 				FC7155C9D5657E608FF205E9687BD934 /* CoreAnimation */,
 				ED91C965D0D500C0E12B1A1504AF1D3D /* Pod */,
 				BF0780646A3185CC1E94B15EF0E7F837 /* Support Files */,
 				647B64C6029499731CF7BEBE925D7CA1 /* timeline-ui */,
+				16315CD62134908700B6BD13 /* VideoExporterOrientationHelper.swift */,
+				16315CD8213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift */,
+				16315CDA2134917700B6BD13 /* PHPhotoLibraryInterface.swift */,
 			);
 			name = AssetPlayer;
 			path = ../..;
@@ -1320,6 +1329,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16315CDB2134917700B6BD13 /* PHPhotoLibraryInterface.swift in Sources */,
 				87BF446B15B1A85F9B8D2052BBCA52AC /* Asset.swift in Sources */,
 				F8A8FD3612A6DD5B3B53FC033C080369 /* AssetPlayer-dummy.m in Sources */,
 				0F7CA029D11787A1F0289B1558CA4831 /* AssetPlayer.swift in Sources */,
@@ -1336,7 +1346,9 @@
 				C6E9925D2FE100021EBCA870C303154D /* PlayerView.swift in Sources */,
 				589B32362DF2B3308F99DD9170419922 /* TimelineView.swift in Sources */,
 				DBF6B5A95EE13D9B308D55500BF99AD5 /* VideoAsset.swift in Sources */,
-				B7D3F505D59FA51CCEE5D3132ADD4D8E /* VideoExportManager.swift in Sources */,
+				16315CD72134908700B6BD13 /* VideoExporterOrientationHelper.swift in Sources */,
+				B7D3F505D59FA51CCEE5D3132ADD4D8E /* VideoExporter.swift in Sources */,
+				16315CD9213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift in Sources */,
 				81F73A05A23D69C15B19C3051D81EE7D /* VideoPlayerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

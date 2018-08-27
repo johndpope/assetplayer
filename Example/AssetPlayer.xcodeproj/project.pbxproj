@@ -8,6 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		0C4EF575C741E1467A8EEB01 /* Pods_AssetPlayer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9063D1AFDBBF538ED88198E0 /* Pods_AssetPlayer_Tests.framework */; };
+		16315CD42130B53C00B6BD13 /* IMG_0068.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 16315CD32130B53C00B6BD13 /* IMG_0068.MOV */; };
+		16315CD52130B53C00B6BD13 /* IMG_0068.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 16315CD32130B53C00B6BD13 /* IMG_0068.MOV */; };
+		16315CDD2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */; };
+		16315CDE2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */; };
+		16315CE02134927E00B6BD13 /* VideoAssetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */; };
+		16315CE12134927E00B6BD13 /* VideoAssetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */; };
+		16315CE3213492C600B6BD13 /* VideoExporterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */; };
+		16315CE4213492C600B6BD13 /* VideoExporterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */; };
+		16315CE62134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
+		16315CE72134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
 		165D9457212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */; };
 		165D9458212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */; };
 		165D945A212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9459212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 */; };
@@ -32,6 +42,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		16315CD32130B53C00B6BD13 /* IMG_0068.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = IMG_0068.MOV; sourceTree = "<group>"; };
+		16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetPlayerSpec.swift; sourceTree = "<group>"; };
+		16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAssetSpec.swift; sourceTree = "<group>"; };
+		16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporterSpec.swift; sourceTree = "<group>"; };
+		16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPhotoLibraryInterfaceSpec.swift; sourceTree = "<group>"; };
 		165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = SampleVideo_1280x720_5mb.mp4; sourceTree = "<group>"; };
 		165D9459212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = SampleVideo_1280x720_1mb.mp4; sourceTree = "<group>"; };
 		1B7BB5FF1237B5B28D8DBF2D /* AssetPlayer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetPlayer.podspec; path = ../AssetPlayer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -121,6 +136,7 @@
 			children = (
 				165D9459212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 */,
 				165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */,
+				16315CD32130B53C00B6BD13 /* IMG_0068.MOV */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -145,6 +161,10 @@
 			children = (
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */,
+				16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */,
+				16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */,
+				16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -255,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16315CD42130B53C00B6BD13 /* IMG_0068.MOV in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
@@ -268,6 +289,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				165D945B212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 in Resources */,
+				16315CD52130B53C00B6BD13 /* IMG_0068.MOV in Resources */,
 				165D9458212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -343,6 +365,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				16315CE62134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */,
+				16315CE02134927E00B6BD13 /* VideoAssetSpec.swift in Sources */,
+				16315CE3213492C600B6BD13 /* VideoExporterSpec.swift in Sources */,
+				16315CDD2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,6 +377,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16315CE12134927E00B6BD13 /* VideoAssetSpec.swift in Sources */,
+				16315CE72134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */,
+				16315CE4213492C600B6BD13 /* VideoExporterSpec.swift in Sources */,
+				16315CDE2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

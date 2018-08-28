@@ -45,42 +45,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 //        pausebutton.backgroundColor = .red
 //
 //        self.view.addSubview(pausebutton)
+        
+        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
+        let video = VideoAsset(url: videoURL)
+//        let frameView = FrameLayerView.init(video: video, videoFrameWidth: 50, videoFrameHeight: 50)
+//        frameView.frame.origin = CGPoint(x: 0, y: 50)
+//        self.view.addSubview(frameView)
+        let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 100)
+        let layerScroller = LayerScrollerView.init(frame: frame, video: video)
+        layerScroller.backgroundColor = .red
+        self.view.addSubview(layerScroller)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        imagePickerController.dismiss(animated: true, completion: nil)
-        let mediaType = info[UIImagePickerControllerMediaType]
-        let videoURL = info[UIImagePickerControllerReferenceURL] as? URL
-        print(videoURL)
-        let vid = VideoAsset(url: videoURL!).changeEndTime(to: 5.0)
-        
-        VideoExporter.exportThemeVideo(with: vid,
-                                            cropViewFrame: CGRect(x: 0, y: 0, width: 720, height: 1280),
-                                            progress:
-            { (progress) in
-                print(progress)
-//                progressToCheck = progress
-        }, success: { returnedFileUrl in
-//            fileUrl = returnedFileUrl
-        }, failure: { (error) in
-//            expect(error).to(beNil())
-//            fail()
-        })
-        
-        
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-
-    @objc func playTapped() {
-//        videoPlayerView.assetPlayer?.play()
-    }
-
-    @objc func pauseTapped() {
-//        videoPlayerView.assetPlayer?.pause()
     }
 }
 

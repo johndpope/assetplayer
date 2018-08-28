@@ -8,12 +8,12 @@
 
 import UIKit
 
-protocol LayerScrollerDelegate: class {
+public protocol LayerScrollerDelegate: class {
     func isScrolling(to time: Double)
     func endScrolling(to time: Double)
 }
 
-class LayerScrollerView: UIView {
+public class LayerScrollerView: UIView {
     weak var delegate: LayerScrollerDelegate?
 
     var scrollingProgrammatically: Bool = false
@@ -53,8 +53,9 @@ class LayerScrollerView: UIView {
         return videoTime
     }
 
-    required init(frame: CGRect, framerate: Double, videoDuration: Double) {
-        self.framerate = framerate
+    required public init(frame: CGRect, video: VideoAsset) {
+        let videoDuration = video.duration
+        self.framerate = video.framerate ?? 0
         self.videoDuration = videoDuration
 
         super.init(frame: frame)
@@ -68,27 +69,19 @@ class LayerScrollerView: UIView {
         self.addSubview(centerLineView)
 
         // Video frame view
-        let view = FrameLayerView(framerate: framerate,
-                                  videoDuration: videoDuration,
-                                  videoFrameWidth: self.videoFrameWidth,
-                                  videoFrameHeight: self.layerHeight)
+        let view = FrameLayerView.init(videoAsset: video.urlAsset,
+                                       framerate: framerate,
+                                       videoDuration: videoDuration,
+                                       videoFrameWidth: self.videoFrameWidth,
+                                       videoFrameHeight: self.layerHeight)
         self.layerContainerView.addSubview(view)
 
         self.scrollView.contentSize = self.layerContainerView.size
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-//    public func addLayerView(with layer: EditableLayer) {
-//        let frame = CGRect(x: 0, y: 0, width: self.widthFromVideoDuration, height: 30.0)
-//        let layerView = LayerSliderView(frame: frame, editableLayer: layer, assetDuration: self.videoDuration)
-//
-//        self.layerContainerView.addSubview(layerView)
-//
-//        self.scrollView.contentSize = self.layerContainerView.size
-//    }
 
     public func handleTracking(for time: Double) {
         guard !self.scrollView.isTracking else {
@@ -127,24 +120,24 @@ class LayerScrollerView: UIView {
         self.addSubview(scrollView)
 
         self.scrollView.contentOffset = CGPoint(x: -(scrollView.width/2) , y: 0)
-        self.scrollView.decelerationRate = 0.5
+//        self.scrollView.decelerationRate = 0.5
 
-        self.scrollView.showsHorizontalScrollIndicator = true
+        self.scrollView.showsHorizontalScrollIndicator = false
         self.scrollView.showsVerticalScrollIndicator = false
     }
 }
 
 extension LayerScrollerView: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         self.handleScroll2(from: scrollView)
     }
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.handleScroll(from: scrollView)
     }
 
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard !decelerate else { return }
 
         self.handleScroll(from: scrollView)
@@ -188,16 +181,14 @@ extension LayerScrollerView: UIScrollViewDelegate {
     }
 }
 
-class FrameLayerView: UIView {
-    required init(framerate: Double, videoDuration: Double, videoFrameWidth: CGFloat, videoFrameHeight: CGFloat) {
+import AVFoundation
+
+public class FrameLayerView: UIView {
+    required public init(videoAsset: AVURLAsset, framerate: Double, videoDuration: Double, videoFrameWidth: CGFloat, videoFrameHeight: CGFloat) {
         super.init(frame: .zero)
-
-        // @TODO: Remove test video
-        let videoURL: URL = Bundle.main.url(forResource: "outputfile", withExtension: "mp4")!
-        let video = VideoAsset(url: videoURL)
-
-        guard let images = video.urlAsset.getAllFramesAsUIImages() else {
-            assertionFailure("dont get here")
+        
+        guard let images = videoAsset.getAllFramesAsUIImages() else {
+            assertionFailure("Issue with getting frames as images for Video Asset")
             return
         }
 
@@ -207,7 +198,26 @@ class FrameLayerView: UIView {
         let totalWidth = CGFloat(frameCountForView) * videoFrameWidth
         let divisor = (Double(images.count) / frameCountForView).rounded()
 
-        //---- Get images
+        let imageViews = self.createSpreadOfImageViews(images: images,
+                                                       divisor: divisor,
+                                                       videoFrameWidth: videoFrameWidth,
+                                                       videoFrameHeight: videoFrameHeight)
+
+        self.width = totalWidth
+        self.height = videoFrameHeight
+        self.clipsToBounds = true
+        self.addSubviews(imageViews)
+    }
+
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func createSpreadOfImageViews(images: [UIImage],
+                                          divisor: Double,
+                                          videoFrameWidth: CGFloat,
+                                          videoFrameHeight: CGFloat) -> [UIImageView] {
+        // @TODO: Measure this
         var imageViews = [UIImageView]()
         // Get an even spread of images per the frame count
         var counter: CGFloat = 0
@@ -216,27 +226,19 @@ class FrameLayerView: UIView {
                 counter += 1
                 continue
             }
-
+            
             let x: CGFloat = CGFloat(imageViews.count) * videoFrameWidth
-
+            
             let imageView = UIImageView(frame: CGRect(x: x, y: 0, width: videoFrameWidth, height: videoFrameHeight))
             imageView.contentMode = .scaleAspectFill
             imageView.image = image
             imageView.clipsToBounds = true
-
+            
             imageViews.append(imageView)
             counter += 1
         }
-        //----
-
-        self.width = totalWidth
-        self.height = videoFrameHeight
-        self.clipsToBounds = true
-        self.addSubviews(imageViews)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        
+        return imageViews
     }
 }
 

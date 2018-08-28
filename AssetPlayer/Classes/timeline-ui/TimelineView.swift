@@ -30,7 +30,7 @@ class TimelineView: UIView {
     func setupTimeline() {
         // Layer Scroller View
         let frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
-        layerScrollerView = LayerScrollerView(frame: frame, framerate: 24, videoDuration: 9.77)
+//        layerScrollerView = LayerScrollerView(frame: frame, framerate: 24, videoDuration: 9.77)
         layerScrollerView.backgroundColor = .darkGray
         layerScrollerView.delegate = self
         self.addSubview(layerScrollerView)

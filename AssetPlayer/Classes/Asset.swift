@@ -64,7 +64,7 @@ public struct VideoAsset: AssetProtocol {
     /// Framerate of Video
     public var framerate: Double? {
         guard let track = self.urlAsset.getFirstVideoTrack() else {
-            print("No first video track")
+            assertionFailure("VideoAsset: " + "Failure getting first video track")
             return nil
         }
         

@@ -28,27 +28,56 @@ extension AVAsset {
         return videoTrack
     }
 
-    public func getAllFramesAsUIImages() -> [UIImage]? {
+    public func getAllFramesAsUIImages(completion: @escaping ([UIImage]?) -> ()) {
         var images: [UIImage] = []
 
-        // Frame Reader
-        let reader = try! AVAssetReader(asset: self)
-
-        guard let firstTrack = self.getFirstVideoTrack() else {
-            return nil
+        DispatchQueue.global(qos: .background).async {
+            // Frame Reader
+            let reader = try! AVAssetReader(asset: self)
+            
+            guard let firstTrack = self.getFirstVideoTrack() else {
+                completion(nil)
+                return
+            }
+            
+            // read video frames as BGRA
+            let trackReaderOutput = AVAssetReaderTrackOutput(track: firstTrack,
+                                                             outputSettings:[String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
+            reader.add(trackReaderOutput)
+            reader.startReading()
+            
+            while let sampleBuffer = trackReaderOutput.copyNextSampleBuffer() {
+                let image = CMBufferHelper.imageFromSampleBuffer(sampleBuffer: sampleBuffer)
+                images.append(image)
+            }
+            
+            DispatchQueue.main.async {
+                completion(images)
+            }
         }
-
-        // read video frames as BGRA
-        let trackReaderOutput = AVAssetReaderTrackOutput(track: firstTrack,
-                                                         outputSettings:[String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
-        reader.add(trackReaderOutput)
-        reader.startReading()
-
-        while let sampleBuffer = trackReaderOutput.copyNextSampleBuffer() {
-            let image = CMBufferHelper.imageFromSampleBuffer(sampleBuffer: sampleBuffer)
-            images.append(image)
-        }
-
-        return images
     }
+    
+//    public func getAllFramesAsUIImages() -> [UIImage]? {
+//        var images: [UIImage] = []
+//
+//        // Frame Reader
+//        let reader = try! AVAssetReader(asset: self)
+//
+//        guard let firstTrack = self.getFirstVideoTrack() else {
+//            return nil
+//        }
+//
+//        // read video frames as BGRA
+//        let trackReaderOutput = AVAssetReaderTrackOutput(track: firstTrack,
+//                                                         outputSettings:[String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
+//        reader.add(trackReaderOutput)
+//        reader.startReading()
+//
+//        while let sampleBuffer = trackReaderOutput.copyNextSampleBuffer() {
+//            let image = CMBufferHelper.imageFromSampleBuffer(sampleBuffer: sampleBuffer)
+//            images.append(image)
+//        }
+//
+//        return images
+//    }
 }

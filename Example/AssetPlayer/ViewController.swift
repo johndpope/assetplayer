@@ -12,54 +12,105 @@ import Photos
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    var videoPlayerView: VideoPlayerView!
+    var assetplayer: AssetPlayer!
     
-    let imagePickerController = UIImagePickerController()
-
+    lazy var playButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 200, width: 100, height: 100))
+        button.setTitle("Play", for: .normal)
+        button.backgroundColor = .red
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(self.play), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var pauseButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 300, width: 100, height: 100))
+        button.setTitle("Pause", for: .normal)
+        button.backgroundColor = .blue
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(self.pause), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var resetButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 400, width: 100, height: 100))
+        button.setTitle("Reset", for: .normal)
+        button.backgroundColor = .purple
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(self.reset), for: .touchUpInside)
+        return button
+    }()
+    
+    var timeLineView: TimelineView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        imagePickerController.sourceType = .photoLibrary
-        imagePickerController.delegate = self
-        imagePickerController.mediaTypes = ["public.image", "public.movie"]
-        
-//        present(imagePickerController, animated: true, completion: nil)
-//        // Do any additional setup after loading the view, typically from a nib.
-//        let videoPlayerView = VideoPlayerView(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
-//        videoPlayerView.backgroundColor = .blue
-//        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_1mb", withExtension: "mp4")!
-//        let testVideo = VideoAsset(url: videoURL)
-//        videoPlayerView.setupPlayer(with: testVideo)
-////        videoPlayerView.assetPlayer?.play()
-//        self.videoPlayerView = videoPlayerView
-//        self.view.addSubview(videoPlayerView)
-//
-//        let playbutton = UIButton(frame: CGRect(x:240, y:40, width: 100, height: 50))
-//        playbutton.setTitle("Play", for: .normal)
-//        playbutton.addTarget(self, action: #selector(playTapped), for: .touchUpInside)
-//        self.view.addSubview(playbutton)
-//        playbutton.backgroundColor = .green
-//
-//        let pausebutton = UIButton(frame: CGRect(x:240, y: 100, width: 100, height: 50))
-//        pausebutton.setTitle("Pause", for: .normal)
-//        pausebutton.addTarget(self, action: #selector(pauseTapped), for: .touchUpInside)
-//        pausebutton.backgroundColor = .red
-//
-//        self.view.addSubview(pausebutton)
-        
         let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
         let video = VideoAsset(url: videoURL)
-//        let frameView = FrameLayerView.init(video: video, videoFrameWidth: 50, videoFrameHeight: 50)
-//        frameView.frame.origin = CGPoint(x: 0, y: 50)
-//        self.view.addSubview(frameView)
-        let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 100)
-        let layerScroller = LayerScrollerView.init(frame: frame, video: video)
-        layerScroller.backgroundColor = .red
-        self.view.addSubview(layerScroller)
+        
+        assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: false)
+        assetplayer.perform(action: .setup(with: video))
+        assetplayer.delegate = self
+        
+        let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 72)
+        let timeLineView = TimelineView.init(frame: frame)
+        timeLineView.setupTimeline(with: video)
+        self.timeLineView = timeLineView
+        self.view.addSubview(timeLineView)
+        
+        self.view.addSubview(playButton)
+        self.view.addSubview(pauseButton)
+        self.view.addSubview(resetButton)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    @objc func play() {
+        self.assetplayer.perform(action: .play)
+    }
+    
+    @objc func pause() {
+        self.assetplayer.perform(action: .pause)
+    }
+    
+    @objc func reset() {
+        self.assetplayer.perform(action: .seekToTimeInSeconds(time: 0.0))
+    }
 }
 
+extension ViewController: AssetPlayerDelegate {
+    public func currentAssetDidChange(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerIsSetup(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerCurrentTimeDidChange(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerCurrentTimeDidChangeInMilliseconds(_ player: AssetPlayer) {
+        self.timeLineView?.handleTracking(forTime: player.currentTime)
+    }
+    
+    public func playerPlaybackDidEnd(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerIsLikelyToKeepUp(_ player: AssetPlayer) {
+        
+    }
+    
+    public func playerBufferTimeDidChange(_ player: AssetPlayer) {
+        
+    }
+}

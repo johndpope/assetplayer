@@ -13,48 +13,158 @@ protocol TimelineViewDelegate: class {
     func endScrolling(at time: Double)
 }
 
-class TimelineView: UIView {
+public class TimelineView: UIView {
     weak var delegate: TimelineViewDelegate?
 
-    private var layerScrollerView: LayerScrollerView!
+    private var videoFramesScrollingView: VideoFramesScrollingView!
 
-    public var currentTimeForLinePosition: Double {
-        return self.layerScrollerView.currentTimeForLinePosition
-    }
-
-    override init(frame: CGRect) {
+//    public var currentTimeForLinePosition: Double {
+//        return self.videoFramesScrollingView.currentTimeForLinePosition
+//    }
+    
+    private var playbackLineIndicator: PlaybackLineIndicatorView?
+    
+    private var timeLineStartingPoint: CGFloat = 0
+    
+    override public init(frame: CGRect) {
         super.init(frame: frame)
+        self.backgroundColor = Constants.TimelineBackgroundColor
     }
-
-    // @TODO: Add framerate and duration here
-    func setupTimeline() {
-        // Layer Scroller View
-        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
-//        layerScrollerView = LayerScrollerView(frame: frame, framerate: 24, videoDuration: 9.77)
-        layerScrollerView.backgroundColor = .darkGray
-        layerScrollerView.delegate = self
-        self.addSubview(layerScrollerView)
-    }
-
-    required init?(coder aDecoder: NSCoder) {
+    
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public func setupTimeline(with video: VideoAsset) {
+        let maxVideoDurationInSeconds = video.duration > 5.0 ? 5.0 : video.duration
+        // @TODO: calculate with calculated width * max time in seconds
+        
+        // Crop View
+        let cropView = CropView(widthPerSecond: 44.4,
+                                maxVideoDurationInSeconds: maxVideoDurationInSeconds,
+                                height: self.height,
+                                center: CGPoint(x: self.bounds.midX, y: self.bounds.midY))
+        cropView.changeBorderColor(to: UIColor(hexString: "#33E5E9") ?? .white)
+        
+        let leftRightScrollViewInset = cropView.frame.minX + cropView.layer.borderWidth
+        timeLineStartingPoint = leftRightScrollViewInset
+        
+        // Layer Scroller View
+        let frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
+        
+        let framerate = video.framerate ?? 0
+        let duration = video.duration
+        videoFramesScrollingView = VideoFramesScrollingView(frame: frame,
+                                                            videoAsset: video.urlAsset,
+                                                            framerate: framerate,
+                                                            videoDuration: duration,
+                                                            leftRightScrollViewInset: leftRightScrollViewInset)
+        videoFramesScrollingView.delegate = self
+        
+        // PlaybackLineIndicator
+        let playbackLineIndicatorWidth: CGFloat = 24
+        let playbackLineIndicatorFrame = CGRect(x: self.timeLineStartingPoint - (playbackLineIndicatorWidth / 2), y: 0, width: playbackLineIndicatorWidth, height: self.height)
+        let playbackLineIndicator = PlaybackLineIndicatorView(frame: playbackLineIndicatorFrame)
+        self.playbackLineIndicator = playbackLineIndicator
+        
+        self.addSubview(videoFramesScrollingView)
+        self.addSubview(cropView)
+        self.addSubview(playbackLineIndicator)
+    }
+    
+    public func handleTracking(forTime time: Double) {
+        print(time)
+        let scrollView = self.videoFramesScrollingView.scrollView
+        guard !scrollView.isTracking else {
+            return
+        }
+        
+        let playbackIndicatorWidth = self.playbackLineIndicator?.frame.width ?? 0
 
-//    public func addLayerView(with layer: EditableLayer) {
-//        self.layerScrollerView.addLayerView(with: layer)
-//    }
-
-    public func handleTracking(for time: Double) {
-        self.layerScrollerView.handleTracking(for: time)
+        // Calculate size per second
+//        let pointsPerSecond: Double =  Double(scrollView.contentSize.width) / self.videoDuration
+        let pointsPerSecond = videoFramesScrollingView.pointsPerSecond
+        // Calculate x scroll value
+        let x = (CGFloat(time * pointsPerSecond) + abs(scrollView.contentOffset.x)) - (playbackIndicatorWidth / 2)
+        let y = scrollView.contentOffset.y
+        
+        print(x)
+        
+        // Scroll to time
+//        let frame = CGRect(x: x, y: Double(y), width: 0.001, height: 0.001)
+        
+//        self.scrollingProgrammatically = true
+//        self.scrollView.scrollRectToVisible(frame, animated: false)
+//        self.scrollingProgrammatically = false
+        
+        self.playbackLineIndicator!.frame.origin.x = x
+        self.layoutIfNeeded()
     }
 }
 
-extension TimelineView: LayerScrollerDelegate {
-    func isScrolling(to time: Double) {
+extension TimelineView: VideoFramesScrollingViewDelegate {
+    internal func isScrolling(to time: Double) {
         delegate?.isScrolling(to: time)
     }
 
-    func endScrolling(to time: Double) {
+    internal func endScrolling(to time: Double) {
         delegate?.endScrolling(at: time)
+    }
+}
+
+extension TimelineView {
+    private struct Constants {
+        static let TimelineBackgroundColor = UIColor(hexString: "#DFE3E3") ?? .white
+        static let CropViewColor = UIColor(hexString: "#33E5E9") ?? .white
+    }
+}
+
+public class PlaybackLineIndicatorView: UIView {
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        self.backgroundColor = .clear
+        self.isUserInteractionEnabled = false
+        
+        let backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
+        backgroundView.backgroundColor = Constants.BackgroundViewColor
+        backgroundView.alpha = Constants.BackgroundViewAlpha
+        self.addSubview(backgroundView)
+        
+        let centerLine = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: self.height))
+        centerLine.center = CGPoint(x: self.bounds.midX, y: self.bounds.midY)
+        centerLine.backgroundColor = Constants.CenterLineColor
+        self.addSubview(centerLine)
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private struct Constants {
+        static let CenterLineColor = UIColor(hexString: "#36CFD3") ?? .white
+        static let BackgroundViewColor = UIColor.white
+        static let BackgroundViewAlpha: CGFloat = 0.70
+    }
+}
+
+public class CropView: UIView {
+    required public init(widthPerSecond: Double,
+                         maxVideoDurationInSeconds: Double,
+                         height: CGFloat,
+                         center: CGPoint) {
+        let cropViewFrame = CGRect(x: 0, y: 0, width: CGFloat(widthPerSecond * maxVideoDurationInSeconds), height: height)
+        super.init(frame: cropViewFrame)
+        
+        self.layer.borderWidth = 4
+        self.isUserInteractionEnabled = false
+        self.center = center
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func changeBorderColor(to color: UIColor) {
+        self.layer.borderColor = color.cgColor
     }
 }

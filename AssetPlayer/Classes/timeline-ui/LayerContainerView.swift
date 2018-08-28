@@ -10,7 +10,7 @@ import UIKit
 import SwifterSwift
 
 class LayerContainerView: UIView {
-    let spacing: CGFloat = 10.0
+    let spacing: CGFloat = 0.0
 
     override func layoutSubviews() {
         super.layoutSubviews()

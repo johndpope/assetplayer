@@ -155,7 +155,7 @@
 		AFBB8A5654B623D419E8B5F59037E069 /* CGSizeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC241B36AC6684B559F60A3BF250948C /* CGSizeExtensions.swift */; };
 		B1B84D81A4A9A9654259BC82F61B546D /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7899CF167B076D72F1065C9898E43 /* StringExtensions.swift */; };
 		B36EAF2AA764D0BA48DCB21EDEE115A2 /* ExampleHooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FD287CA57938512C53D2515032A01 /* ExampleHooks.swift */; };
-		B4F4DB5B8AFE73E16796FCB8EDB9F6F4 /* LayerScrollerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCEFBCB7B8DF2766ECA27F22595D9A8 /* LayerScrollerView.swift */; };
+		B4F4DB5B8AFE73E16796FCB8EDB9F6F4 /* VideoFramesScrollingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */; };
 		B5732BD492CC91756755F070950DA72D /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79E99BDFEF9D7F44ADB0CA81B45AFF5 /* Expression.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		B5BF5D83271975C071473F331E47FCD7 /* BeCloseTo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF72648331CADAD96AF1B0FDC48FEE32 /* BeCloseTo.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		B62FCD125AD6BD6E9A295A15C70E9AA6 /* RaisesException.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8007897B0BB79AD51072CCB256E3E999 /* RaisesException.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -329,7 +329,7 @@
 		390CD362CF80C6FA9592B785B47D8D3F /* Pods-AssetPlayer_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-AssetPlayer_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		3CD2B178D51C481A8FA2EE8A86F32036 /* ToSucceed.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ToSucceed.swift; path = Sources/Nimble/Matchers/ToSucceed.swift; sourceTree = "<group>"; };
 		3CE80E7D0DC329FC726C78C534435E66 /* CwlMachBadInstructionHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CwlMachBadInstructionHandler.m; path = Carthage/Checkouts/CwlPreconditionTesting/Sources/CwlMachBadInstructionHandler/CwlMachBadInstructionHandler.m; sourceTree = "<group>"; };
-		3DCEFBCB7B8DF2766ECA27F22595D9A8 /* LayerScrollerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LayerScrollerView.swift; sourceTree = "<group>"; };
+		3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VideoFramesScrollingView.swift; sourceTree = "<group>"; };
 		3F13B7F7F1E912AC880336EBCDF0B381 /* AVAssetExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AVAssetExtensions.swift; path = AssetPlayer/Classes/AVAssetExtensions.swift; sourceTree = "<group>"; };
 		40C99C15E3B05516483FB81D97AA4B37 /* UIDatePickerExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIDatePickerExtensions.swift; path = Sources/Extensions/UIKit/UIDatePickerExtensions.swift; sourceTree = "<group>"; };
 		4108786C3253FCC145797D33C1315AD6 /* Async.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Async.swift; path = Sources/Nimble/Utils/Async.swift; sourceTree = "<group>"; };
@@ -756,7 +756,7 @@
 			children = (
 				4B34C8D8E787ABB7D56E9330C2778D6A /* CanvasView.swift */,
 				FF6A98F7C0BEE13E7E1474150C1C9C2E /* LayerContainerView.swift */,
-				3DCEFBCB7B8DF2766ECA27F22595D9A8 /* LayerScrollerView.swift */,
+				3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */,
 				89773AC4644F9E07E7AD61565786264A /* TimelineView.swift */,
 			);
 			name = "timeline-ui";
@@ -1342,7 +1342,7 @@
 				F50A64C3519FA6100E0E75CD5852240F /* DraggableView.swift in Sources */,
 				CD0104A4ADEDFEC514BDA0F8B90B0756 /* FileHelpers.swift in Sources */,
 				3126C887835AC7780030D48CE247643F /* LayerContainerView.swift in Sources */,
-				B4F4DB5B8AFE73E16796FCB8EDB9F6F4 /* LayerScrollerView.swift in Sources */,
+				B4F4DB5B8AFE73E16796FCB8EDB9F6F4 /* VideoFramesScrollingView.swift in Sources */,
 				C6E9925D2FE100021EBCA870C303154D /* PlayerView.swift in Sources */,
 				589B32362DF2B3308F99DD9170419922 /* TimelineView.swift in Sources */,
 				DBF6B5A95EE13D9B308D55500BF99AD5 /* VideoAsset.swift in Sources */,

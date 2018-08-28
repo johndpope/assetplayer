@@ -130,10 +130,3 @@ public struct VideoAsset: AssetProtocol {
         return VideoAsset(urlAsset: self.urlAsset, timePoints: self.timePoints, frame: frame)
     }
 }
-
-// MARK: AV Extension Getters
-extension VideoAsset {
-    public func getAllFramesAsUIImages() -> [UIImage]? {
-        return self.urlAsset.getAllFramesAsUIImages()
-    }
-}

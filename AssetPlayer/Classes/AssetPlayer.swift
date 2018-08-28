@@ -87,6 +87,7 @@ public class AssetPlayer: NSObject {
     private var isPlayingLocalAsset: Bool
     private var shouldLoop: Bool
     private var startTimeForLoop: Double = 0
+    private var endTimeForLoop: Double? = nil
     
     // Mark: Time Properties
     public var currentTime: Double = 0
@@ -102,7 +103,7 @@ public class AssetPlayer: NSObject {
 
     public var timeLeftText: String {
         let timeLeft = duration - currentTime
-        return self.createTimeString(time: Float(timeLeft))
+        return self.createTimeString(time: timeLeft)
     }
 
     public var maxSecondValue: Float = 0
@@ -189,8 +190,10 @@ public class AssetPlayer: NSObject {
     
     /// The state that the internal `AVPlayer` is in.
     public var state: AssetPlayerPlaybackState {
+        willSet {
+            guard state != newValue else { return }
+        }
         didSet {
-            guard state != oldValue else { return }
             self.previousState = oldValue
             self.handleStateChange(state)
         }
@@ -300,7 +303,7 @@ public class AssetPlayer: NSObject {
         return formatter
     }()
     
-    private func createTimeString(time: Float) -> String {
+    private func createTimeString(time: Double) -> String {
         let components = NSDateComponents()
         components.second = Int(max(0.0, time))
         
@@ -334,6 +337,7 @@ extension AssetPlayer {
             self.player.pause()
         case .finished:
             guard !shouldLoop else {
+                self.currentTime = startTimeForLoop
                 self.seekToTimeInSeconds(startTimeForLoop)
                 self.state = .playing
                 return
@@ -341,6 +345,8 @@ extension AssetPlayer {
             
             self.player.pause()
         }
+        
+        self.delegate?.playerPlaybackStateDidChange(self)
     }
     
     // MARK: - KVO Observation
@@ -368,11 +374,11 @@ extension AssetPlayer {
             
             let hasValidDuration = newDuration.isNumeric && newDuration.value != 0
             let newDurationSeconds = hasValidDuration ? CMTimeGetSeconds(newDuration) : 0.0
-            let currentTime = hasValidDuration ? Float(CMTimeGetSeconds(player.currentTime())) : 0.0
+            let currentTime = hasValidDuration ? player.currentTime().seconds : 0.0
             
             self.maxSecondValue = Float(newDurationSeconds)
             self.timeElapsedText = createTimeString(time: currentTime)
-            self.durationText = createTimeString(time: Float(newDurationSeconds))
+            self.durationText = createTimeString(time: newDurationSeconds)
             
             self.delegate?.playerIsSetup(self)
             
@@ -440,7 +446,9 @@ extension AssetPlayer {
                     // Smart Value check for buffered time to switch to playing state or to buffering state
                     
                     // Acceptable buffer is 10% of total asset duration
-                    let acceptableBufferedTime = self.duration * 0.10
+                    // @TODO: Make a better buffer calculation
+                    let tenPercentOfDuration = self.duration * 0.10
+                    let acceptableBufferedTime = tenPercentOfDuration > 30.0 ? tenPercentOfDuration : 5.0
                     let smartValue = (bufferedTime - self.currentTime) > acceptableBufferedTime
                     
                     switch smartValue {
@@ -496,6 +504,8 @@ extension AssetPlayer {
             self.shouldLoop = shouldLoop
         case .changeStartTimeForLoop(let time):
             self.startTimeForLoop = time
+        case .changeEndTimeForLoop(let time):
+            self.endTimeForLoop = time
         }
     }
     
@@ -516,9 +526,11 @@ extension AssetPlayer {
         // Seconds time observer
         let interval = CMTimeMake(1, 1)
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [unowned self] time in
-            let timeElapsed = Float(CMTimeGetSeconds(time))
+            guard self.state != .finished else { return }
             
-            self.currentTime = Double(timeElapsed)
+            let timeElapsed = time.seconds
+            
+            self.currentTime = timeElapsed
             self.timeElapsedText = self.createTimeString(time: timeElapsed)
             
             self.delegate?.playerCurrentTimeDidChange(self)
@@ -527,12 +539,19 @@ extension AssetPlayer {
         // Millisecond time observer
         let millisecondInterval = CMTimeMake(1, 100)
         timeObserverTokenMilliseconds = player.addPeriodicTimeObserver(forInterval: millisecondInterval, queue: DispatchQueue.main) { [unowned self] time in
-            let timeElapsed = Float(CMTimeGetSeconds(time))
+            guard self.state != .finished else { return }
             
-            self.currentTime = Double(timeElapsed)
+            let timeElapsed = time.seconds
+            
+            self.currentTime = timeElapsed
             self.timeElapsedText = self.createTimeString(time: timeElapsed)
             
             self.delegate?.playerCurrentTimeDidChangeInMilliseconds(self)
+            
+            // Set finished state if we are looping and passed our loop end time
+            if let endTime = self.endTimeForLoop, timeElapsed >= endTime, self.shouldLoop {
+                self.state = .finished
+            }
         }
     }
     
@@ -581,4 +600,5 @@ public enum AssetPlayerActions {
     case changeIsPlayingLocalAsset(to: Bool)
     case changeShouldLoop(to: Bool)
     case changeStartTimeForLoop(to: Double)
+    case changeEndTimeForLoop(to: Double)
 }

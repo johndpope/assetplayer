@@ -15,7 +15,7 @@ protocol VideoFramesScrollingViewDelegate: class {
 
 public extension VideoFramesScrollingView {
     private struct Constants {
-        static let PercentageOfTotalFrames: Double = 10
+        static let DesiredFramesPerSecond: Double = 1
     }
 }
 
@@ -29,22 +29,18 @@ public class VideoFramesScrollingView: UIView {
 
     private let framerate: Double
     private let videoDuration: Double
-
-    private var videoFrameWidth: CGFloat {
-        return self.height * (9/16)
-    }
     
     public var pointsPerSecond: Double {
         return Double(self.scrollView.contentSize.width) / self.videoDuration
     }
 
-    private var widthFromVideoDuration: CGFloat {
-        let totalVideoFrames = videoDuration * framerate
-        let frameCountForView = totalVideoFrames * Constants.PercentageOfTotalFrames
-        // Frame count for view * width wanted for each frame
-        let totalWidth = CGFloat(frameCountForView) * videoFrameWidth
-        return totalWidth
-    }
+//    private var widthFromVideoDuration: CGFloat {
+//        let totalVideoFrames = videoDuration * framerate
+//        let frameCountForView = totalVideoFrames * Constants.PercentageOfTotalFrames
+//        // Frame count for view * width wanted for each frame
+//        let totalWidth = CGFloat(frameCountForView) * videoFrameWidth
+//        return totalWidth
+//    }
 
 //    public var currentTimeForLinePosition: Double {
 //        let xOffset = self.scrollView.contentOffset.x
@@ -67,6 +63,7 @@ public class VideoFramesScrollingView: UIView {
                          videoAsset: AVURLAsset,
                          framerate: Double,
                          videoDuration: Double,
+                         videoFrameWidth: CGFloat,
                          leftRightScrollViewInset: CGFloat) {
         self.framerate = framerate
         self.videoDuration = videoDuration
@@ -79,9 +76,9 @@ public class VideoFramesScrollingView: UIView {
         let newVideoFramesView = VideoFramesView(videoAsset: videoAsset,
                                               framerate: framerate,
                                               videoDuration: videoDuration,
-                                              videoFrameWidth: self.videoFrameWidth,
+                                              videoFrameWidth: videoFrameWidth,
                                               videoFrameHeight: self.height,
-                                              percentageOfTotalFrames: Constants.PercentageOfTotalFrames,
+                                              desiredFramesPerSecond: Constants.DesiredFramesPerSecond,
                                               imagesLoaded:
             { [weak self] in
                 guard let videoFramesView = self?.videoFramesView else {
@@ -194,7 +191,7 @@ public class VideoFramesView: UIView {
                          videoDuration: Double,
                          videoFrameWidth: CGFloat,
                          videoFrameHeight: CGFloat,
-                         percentageOfTotalFrames: Double,
+                         desiredFramesPerSecond: Double,
                          imagesLoaded: @escaping () -> ()) {
         super.init(frame: .zero)
         self.clipsToBounds = true
@@ -207,8 +204,7 @@ public class VideoFramesView: UIView {
                 return
             }
             
-            let totalVideoFrames = videoDuration * framerate
-            let frameCountForView = totalVideoFrames * (percentageOfTotalFrames / 100)
+            let frameCountForView = videoDuration * desiredFramesPerSecond
             // Frame count for view * width wanted for each frame
             let totalWidth = CGFloat(frameCountForView) * videoFrameWidth
             let divisor = (Double(images.count) / frameCountForView).rounded()

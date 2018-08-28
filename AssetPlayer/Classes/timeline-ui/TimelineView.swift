@@ -58,6 +58,7 @@ public class TimelineView: UIView {
                                                             videoAsset: video.urlAsset,
                                                             framerate: framerate,
                                                             videoDuration: duration,
+                                                            videoFrameWidth: 44.4,
                                                             leftRightScrollViewInset: leftRightScrollViewInset)
         videoFramesScrollingView.delegate = self
         
@@ -73,31 +74,22 @@ public class TimelineView: UIView {
     }
     
     public func handleTracking(forTime time: Double) {
-        print(time)
         let scrollView = self.videoFramesScrollingView.scrollView
         guard !scrollView.isTracking else {
             return
         }
         
-        let playbackIndicatorWidth = self.playbackLineIndicator?.frame.width ?? 0
+        guard let playbackIndicator = self.playbackLineIndicator else {
+            return
+        }
 
         // Calculate size per second
-//        let pointsPerSecond: Double =  Double(scrollView.contentSize.width) / self.videoDuration
         let pointsPerSecond = videoFramesScrollingView.pointsPerSecond
         // Calculate x scroll value
-        let x = (CGFloat(time * pointsPerSecond) + abs(scrollView.contentOffset.x)) - (playbackIndicatorWidth / 2)
-        let y = scrollView.contentOffset.y
+        let x = (CGFloat(time * pointsPerSecond) + abs(scrollView.contentOffset.x)) - (playbackIndicator.width / 2)
         
-        print(x)
-        
-        // Scroll to time
-//        let frame = CGRect(x: x, y: Double(y), width: 0.001, height: 0.001)
-        
-//        self.scrollingProgrammatically = true
-//        self.scrollView.scrollRectToVisible(frame, animated: false)
-//        self.scrollingProgrammatically = false
-        
-        self.playbackLineIndicator!.frame.origin.x = x
+        // Scroll playbackLineIndicator
+        playbackIndicator.frame.origin.x = x
         self.layoutIfNeeded()
     }
 }
@@ -152,10 +144,10 @@ public class CropView: UIView {
                          maxVideoDurationInSeconds: Double,
                          height: CGFloat,
                          center: CGPoint) {
-        let cropViewFrame = CGRect(x: 0, y: 0, width: CGFloat(widthPerSecond * maxVideoDurationInSeconds), height: height)
+        let cropViewFrame = CGRect(x: 0, y: 0, width: CGFloat(widthPerSecond * maxVideoDurationInSeconds) + (Constants.BorderWidth * 2), height: height)
         super.init(frame: cropViewFrame)
         
-        self.layer.borderWidth = 4
+        self.layer.borderWidth = Constants.BorderWidth
         self.isUserInteractionEnabled = false
         self.center = center
     }
@@ -166,5 +158,9 @@ public class CropView: UIView {
     
     public func changeBorderColor(to color: UIColor) {
         self.layer.borderColor = color.cgColor
+    }
+    
+    private struct Constants {
+        static let BorderWidth: CGFloat = 4
     }
 }

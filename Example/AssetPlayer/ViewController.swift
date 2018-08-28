@@ -45,12 +45,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
+        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_1mb", withExtension: "mp4")!
         let video = VideoAsset(url: videoURL)
         
-        assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: false)
+        assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
         assetplayer.perform(action: .setup(with: video))
         assetplayer.delegate = self
+        assetplayer.perform(action: .changeEndTimeForLoop(to: 5.0))
         
         let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 72)
         let timeLineView = TimelineView.init(frame: frame)
@@ -91,7 +92,6 @@ extension ViewController: AssetPlayerDelegate {
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
-        
     }
     
     public func playerCurrentTimeDidChange(_ player: AssetPlayer) {

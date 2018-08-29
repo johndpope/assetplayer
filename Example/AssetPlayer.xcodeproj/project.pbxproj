@@ -18,6 +18,7 @@
 		16315CE4213492C600B6BD13 /* VideoExporterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */; };
 		16315CE62134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
 		16315CE72134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
+		16315CE92136FA0600B6BD13 /* MeasurementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE82136FA0600B6BD13 /* MeasurementTests.swift */; };
 		165D9457212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */; };
 		165D9458212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */; };
 		165D945A212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9459212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 */; };
@@ -47,6 +48,7 @@
 		16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAssetSpec.swift; sourceTree = "<group>"; };
 		16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporterSpec.swift; sourceTree = "<group>"; };
 		16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPhotoLibraryInterfaceSpec.swift; sourceTree = "<group>"; };
+		16315CE82136FA0600B6BD13 /* MeasurementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasurementTests.swift; sourceTree = "<group>"; };
 		165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = SampleVideo_1280x720_5mb.mp4; sourceTree = "<group>"; };
 		165D9459212E052900F173D4 /* SampleVideo_1280x720_1mb.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = SampleVideo_1280x720_1mb.mp4; sourceTree = "<group>"; };
 		1B7BB5FF1237B5B28D8DBF2D /* AssetPlayer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = AssetPlayer.podspec; path = ../AssetPlayer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -165,6 +167,7 @@
 				16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */,
 				16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */,
 				16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */,
+				16315CE82136FA0600B6BD13 /* MeasurementTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16315CE92136FA0600B6BD13 /* MeasurementTests.swift in Sources */,
 				16315CE12134927E00B6BD13 /* VideoAssetSpec.swift in Sources */,
 				16315CE72134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */,
 				16315CE4213492C600B6BD13 /* VideoExporterSpec.swift in Sources */,

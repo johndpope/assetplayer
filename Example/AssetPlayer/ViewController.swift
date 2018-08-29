@@ -12,7 +12,8 @@ import Photos
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    var assetplayer: AssetPlayer!
+    private var assetplayer: AssetPlayer!
+    private var previousStartTime: Double = 0.0
     
     lazy var playButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 200, width: 100, height: 100))
@@ -49,12 +50,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let video = VideoAsset(url: videoURL)
         
         assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
-        assetplayer.perform(action: .setup(with: video))
+        assetplayer.execute(action: .setup(with: video))
         assetplayer.delegate = self
-        assetplayer.perform(action: .changeEndTimeForLoop(to: 5.0))
         
         let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 72)
         let timeLineView = TimelineView.init(frame: frame)
+        timeLineView.delegate = self
         timeLineView.setupTimeline(with: video)
         self.timeLineView = timeLineView
         self.view.addSubview(timeLineView)
@@ -70,15 +71,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func play() {
-        self.assetplayer.perform(action: .play)
+        self.assetplayer.execute(action: .play)
     }
     
     @objc func pause() {
-        self.assetplayer.perform(action: .pause)
+        self.assetplayer.execute(action: .pause)
     }
     
     @objc func reset() {
-        self.assetplayer.perform(action: .seekToTimeInSeconds(time: 0.0))
+        self.assetplayer.execute(action: .seekToTimeInSeconds(time: 0.3))
     }
 }
 
@@ -88,10 +89,10 @@ extension ViewController: AssetPlayerDelegate {
     }
     
     public func playerIsSetup(_ player: AssetPlayer) {
-        
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
+        
     }
     
     public func playerCurrentTimeDidChange(_ player: AssetPlayer) {
@@ -112,5 +113,30 @@ extension ViewController: AssetPlayerDelegate {
     
     public func playerBufferTimeDidChange(_ player: AssetPlayer) {
         
+    }
+}
+
+extension ViewController: TimelineViewDelegate {
+    func isScrolling() {
+        // Pause Player
+        self.assetplayer.execute(action: .pause)
+    }
+    
+    func endScrolling() {}
+    
+    func didChangeStartAndEndTime(to time: (startTime: Double, endTime: Double)) {
+        let newCurrentTime = self.getNewTimeFromOffset(currentTime: assetplayer.currentTime,
+                                                       newStartTime: time.startTime,
+                                                       previousStartTime: previousStartTime)
+        assetplayer.execute(action: .seekToTimeInSeconds(time: newCurrentTime))
+        assetplayer.execute(action: .changeStartTimeForLoop(to: time.startTime))
+        assetplayer.execute(action: .changeEndTimeForLoop(to: time.endTime))
+        
+        previousStartTime = time.startTime
+    }
+    
+    private func getNewTimeFromOffset(currentTime: Double, newStartTime: Double, previousStartTime: Double) -> Double {
+        let offset = newStartTime - previousStartTime
+        return currentTime + offset
     }
 }

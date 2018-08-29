@@ -9,8 +9,8 @@
 import UIKit
 
 protocol VideoFramesScrollingViewDelegate: class {
-    func isScrolling(to time: Double)
-    func endScrolling(to time: Double)
+    func isScrolling()
+    func endScrolling()
 }
 
 public extension VideoFramesScrollingView {
@@ -131,18 +131,20 @@ public class VideoFramesScrollingView: UIView {
 
 extension VideoFramesScrollingView: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
 //        self.handleDefaultScroll(from: scrollView)
+        self.delegate?.isScrolling()
     }
 
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 //        self.handleEndScroll(from: scrollView)
+        self.delegate?.endScrolling()
     }
 
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard !decelerate else { return }
 
 //        self.handleEndScroll(from: scrollView)
+        self.delegate?.endScrolling()
     }
 
 //    func handleEndScroll(from scrollView: UIScrollView) {

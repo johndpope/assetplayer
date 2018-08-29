@@ -51,6 +51,11 @@
                BlueprintName = "AssetPlayer_Tests"
                ReferencedContainer = "container:AssetPlayer.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "MeasurementTests/testGetAllFrames()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

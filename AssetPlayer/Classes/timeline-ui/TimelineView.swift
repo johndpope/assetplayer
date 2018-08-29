@@ -8,13 +8,14 @@
 
 import UIKit
 
-protocol TimelineViewDelegate: class {
-    func isScrolling(to time: Double)
-    func endScrolling(at time: Double)
+public protocol TimelineViewDelegate: class {
+    func isScrolling()
+    func endScrolling()
+    func didChangeStartAndEndTime(to time: (startTime: Double, endTime: Double))
 }
 
 public class TimelineView: UIView {
-    weak var delegate: TimelineViewDelegate?
+    public weak var delegate: TimelineViewDelegate?
 
     private var videoFramesScrollingView: VideoFramesScrollingView!
 
@@ -36,11 +37,13 @@ public class TimelineView: UIView {
     }
     
     public func setupTimeline(with video: VideoAsset) {
-        let maxVideoDurationInSeconds = video.duration > 5.0 ? 5.0 : video.duration
+        let maxVideoDurationInSeconds = video.duration > Constants.CropViewDurationInSeconds ? Constants.CropViewDurationInSeconds : video.duration
+        
         // @TODO: calculate with calculated width * max time in seconds
+        let widthPerSecond = 44.4
         
         // Crop View
-        let cropView = CropView(widthPerSecond: 44.4,
+        let cropView = CropView(widthPerSecond: widthPerSecond,
                                 maxVideoDurationInSeconds: maxVideoDurationInSeconds,
                                 height: self.height,
                                 center: CGPoint(x: self.bounds.midX, y: self.bounds.midY))
@@ -58,7 +61,7 @@ public class TimelineView: UIView {
                                                             videoAsset: video.urlAsset,
                                                             framerate: framerate,
                                                             videoDuration: duration,
-                                                            videoFrameWidth: 44.4,
+                                                            videoFrameWidth: CGFloat(widthPerSecond),
                                                             leftRightScrollViewInset: leftRightScrollViewInset)
         videoFramesScrollingView.delegate = self
         
@@ -95,12 +98,17 @@ public class TimelineView: UIView {
 }
 
 extension TimelineView: VideoFramesScrollingViewDelegate {
-    internal func isScrolling(to time: Double) {
-        delegate?.isScrolling(to: time)
+    internal func isScrolling() {
+        delegate?.isScrolling()
     }
 
-    internal func endScrolling(to time: Double) {
-        delegate?.endScrolling(at: time)
+    internal func endScrolling() {
+        delegate?.endScrolling()
+        
+        let x = self.videoFramesScrollingView.scrollView.contentOffset.x + self.timeLineStartingPoint
+        let startTime = Double(x) / videoFramesScrollingView.pointsPerSecond
+        let endTime = startTime + Constants.CropViewDurationInSeconds
+        delegate?.didChangeStartAndEndTime(to: (startTime: startTime, endTime: endTime))
     }
 }
 
@@ -108,6 +116,7 @@ extension TimelineView {
     private struct Constants {
         static let TimelineBackgroundColor = UIColor(hexString: "#DFE3E3") ?? .white
         static let CropViewColor = UIColor(hexString: "#33E5E9") ?? .white
+        static let CropViewDurationInSeconds = 5.0
     }
 }
 

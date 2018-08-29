@@ -26,7 +26,7 @@ class VideoExporterSpec: QuickSpec {
             return VideoAsset(url: Bundle.main.url(forResource: "IMG_0068", withExtension: "MOV")!)
         }
         
-        describe("video exporter") {
+        xdescribe("video exporter") {
             var fileUrl: URL?
             var progressToCheck: Float = 0
             

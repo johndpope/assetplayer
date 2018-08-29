@@ -88,6 +88,9 @@ public class AssetPlayer: NSObject {
     private var shouldLoop: Bool
     private var startTimeForLoop: Double = 0
     private var endTimeForLoop: Double? = nil
+    public var isMuted: Bool {
+        return self.player.isMuted
+    }
     
     // Mark: Time Properties
     public var currentTime: Double = 0
@@ -111,7 +114,7 @@ public class AssetPlayer: NSObject {
     public var duration: Double {
         guard let currentItem = player.currentItem else { return 0.0 }
 
-        return CMTimeGetSeconds(currentItem.duration)
+        return currentItem.duration.seconds
     }
 
     public var rate: Float = 1.0 {
@@ -445,13 +448,13 @@ extension AssetPlayer {
                     
                     // Smart Value check for buffered time to switch to playing state or to buffering state
                     
-                    // Acceptable buffer is 10% of total asset duration
-                    // @TODO: Make a better buffer calculation
+                    // Acceptable buffer is 10% of total asset duration with a dampening factor
+                    // @TODO: There is a bit better buffering calculation we could do here
                     let tenPercentOfDuration = self.duration * 0.10
-                    let acceptableBufferedTime = tenPercentOfDuration > 30.0 ? tenPercentOfDuration : 5.0
-                    let smartValue = (bufferedTime - self.currentTime) > acceptableBufferedTime
-                    
-                    switch smartValue {
+                    let acceptableBufferedTime = pow(tenPercentOfDuration, (1.0/2.0))
+                    let isBufferedEnough = (bufferedTime - self.currentTime) > acceptableBufferedTime || bufferedTime > self.duration
+
+                    switch isBufferedEnough {
                     case true:
                         // Only switch to playing state if we are in buffering state and our previous state was playing
                         if self.state == .buffering, previousState == .playing {
@@ -486,7 +489,7 @@ extension AssetPlayer {
 
 // MARK: Playback Control Methods.
 extension AssetPlayer {
-    public func perform(action: AssetPlayerActions) {
+    public func execute(action: AssetPlayerActions) {
         switch action {
         case .setup(let asset):
             self.setup(with: asset)
@@ -503,9 +506,23 @@ extension AssetPlayer {
         case .changeShouldLoop(let shouldLoop):
             self.shouldLoop = shouldLoop
         case .changeStartTimeForLoop(let time):
+            guard time > 0 else {
+                self.startTimeForLoop = 0
+                return
+            }
             self.startTimeForLoop = time
         case .changeEndTimeForLoop(let time):
+            guard self.duration != 0 else {
+                return
+            }
+            
+            guard time < self.duration else {
+                self.endTimeForLoop = self.duration
+                return
+            }
             self.endTimeForLoop = time
+        case .changeIsMuted(let isMuted):
+            self.player.isMuted = isMuted
         }
     }
     
@@ -547,7 +564,8 @@ extension AssetPlayer {
             self.timeElapsedText = self.createTimeString(time: timeElapsed)
             
             self.delegate?.playerCurrentTimeDidChangeInMilliseconds(self)
-            
+//            print(self.endTimeForLoop)
+//            print(timeElapsed)
             // Set finished state if we are looping and passed our loop end time
             if let endTime = self.endTimeForLoop, timeElapsed >= endTime, self.shouldLoop {
                 self.state = .finished
@@ -601,4 +619,5 @@ public enum AssetPlayerActions {
     case changeShouldLoop(to: Bool)
     case changeStartTimeForLoop(to: Double)
     case changeEndTimeForLoop(to: Double)
+    case changeIsMuted(to: Bool)
 }

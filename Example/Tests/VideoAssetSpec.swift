@@ -69,22 +69,22 @@ class VideoAssetSpec: QuickSpec {
             
             describe("video asset extension getters") {
                 it("should get all frames for thirtySecondAsset") {
-                    var images: [UIImage]? = []
+                    var images: [UIImage]?
                     
                     thirtySecondAsset.urlAsset.getAllFramesAsUIImages(completion: { (returnedImages) in
                         images = returnedImages
                     })
                     
-                    expect(images?.count).toEventually(equal(739), timeout: 4.0)
+                    expect(images?.count).toEventually(equal(739), timeout: 8.0)
                 }
                 
                 it("should get all frames for fiveSecondAsset") {
-                    var images: [UIImage]? = []
+                    var images: [UIImage]?
                     
                     fiveSecondAsset.urlAsset.getAllFramesAsUIImages(completion: { (returnedImages) in
                         images = returnedImages
                     })
-                    expect(images?.count).toEventually(equal(132), timeout: 2.0)
+                    expect(images?.count).toEventually(equal(132), timeout: 3.0)
                 }
             }
         }

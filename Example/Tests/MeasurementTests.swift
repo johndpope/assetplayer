@@ -23,12 +23,6 @@ class MeasurementTests: XCTestCase {
         super.tearDown()
     }
     
-    func testGetOneFramePerSecond() {
-        self.measure {
-            let _ = thirtySecondAsset.urlAsset.getOneFramePerSecond()
-        }
-    }
-    
     func testGetAllFrames() {
         self.measure {
             let expectation = XCTestExpectation(description: "should get all frames")

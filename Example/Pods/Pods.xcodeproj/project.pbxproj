@@ -618,6 +618,15 @@
 			path = "../Target Support Files/Nimble";
 			sourceTree = "<group>";
 		};
+		16315CEA213744CA00B6BD13 /* TimeLineView */ = {
+			isa = PBXGroup;
+			children = (
+				89773AC4644F9E07E7AD61565786264A /* TimelineView.swift */,
+				3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */,
+			);
+			path = TimeLineView;
+			sourceTree = "<group>";
+		};
 		239FF904AC7476858995177DF9C87FD3 /* Nimble */ = {
 			isa = PBXGroup;
 			children = (
@@ -756,8 +765,6 @@
 			children = (
 				4B34C8D8E787ABB7D56E9330C2778D6A /* CanvasView.swift */,
 				FF6A98F7C0BEE13E7E1474150C1C9C2E /* LayerContainerView.swift */,
-				3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */,
-				89773AC4644F9E07E7AD61565786264A /* TimelineView.swift */,
 			);
 			name = "timeline-ui";
 			path = "AssetPlayer/Classes/timeline-ui";
@@ -961,6 +968,7 @@
 		CE908BB0D4CDA861A966936FC703A72A /* AssetPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				16315CEA213744CA00B6BD13 /* TimeLineView */,
 				D7FA51BE5FC63C9E414FCB3BE81310A8 /* Asset.swift */,
 				A2FCA548F6422FE1BC5252FBBB6642F0 /* AssetPlayer.swift */,
 				3F13B7F7F1E912AC880336EBCDF0B381 /* AVAssetExtensions.swift */,

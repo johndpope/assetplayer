@@ -14,6 +14,8 @@
 					<real>4.57</real>
 					<key>baselineIntegrationDisplayName</key>
 					<string>Local Baseline</string>
+					<key>maxPercentRelativeStandardDeviation</key>
+					<real>20</real>
 				</dict>
 			</dict>
 			<key>testGetFramesForFirstTenSeconds()</key>

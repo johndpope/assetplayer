@@ -27,7 +27,19 @@ extension AVAsset {
         let videoTrack: AVAssetTrack = track as AVAssetTrack
         return videoTrack
     }
+}
 
+// MARK: Frame getters
+extension AVAsset {
+    // @TODO: Call initialDurationRequest something else
+    public func getAllFramesIncrementally(initialFramesDurationInSeconds: Double, completion: @escaping ([UIImage]?) -> ()) -> [UIImage]? {
+        // Start getting all frames with completion which will be done in background
+        self.getAllFramesAsUIImages(completion: completion)
+        
+        // In the mean time, return frames
+        return self.getFrames(atTimeRange: CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(initialFramesDurationInSeconds, 1000)))
+    }
+    
     public func getAllFramesAsUIImages(completion: @escaping ([UIImage]?) -> ()) {
         var images: [UIImage] = []
 
@@ -57,28 +69,53 @@ extension AVAsset {
         }
     }
     
-    public func getOneFramePerSecond() -> [UIImage] {
-        let duration: Float64 = CMTimeGetSeconds(self.duration)
-        let generator = AVAssetImageGenerator(asset:self)
-        generator.appliesPreferredTrackTransform = true
+    private func getFrames(atTimeRange timeRange: CMTimeRange) -> [UIImage]? {
+        var images: [UIImage] = []
         
-        var frames: [UIImage] = []
-        for index:Int in 0 ..< Int(duration) {
-            let image = self.getFrame(from: generator, with: Float64(index))
-            image.flatMap({ frames.append($0) })
-        }
+        // Frame Reader
+        let reader = try! AVAssetReader(asset: self)
         
-        return frames
-    }
-    
-    private func getFrame(from generator: AVAssetImageGenerator, with time: Float64) -> UIImage? {
-        let time: CMTime = CMTimeMakeWithSeconds(time, 1000)
-        let image: CGImage
-        do {
-            try image = generator.copyCGImage(at:time, actualTime:nil)
-        } catch {
+        guard let firstTrack = self.getFirstVideoTrack() else {
             return nil
         }
-        return UIImage(cgImage: image)
+        
+        // read video frames as BGRA
+        let trackReaderOutput = AVAssetReaderTrackOutput(track: firstTrack,
+                                                         outputSettings:[String(kCVPixelBufferPixelFormatTypeKey): NSNumber(value: kCVPixelFormatType_32BGRA)])
+        reader.add(trackReaderOutput)
+        reader.timeRange = timeRange
+        reader.startReading()
+        
+        while let sampleBuffer = trackReaderOutput.copyNextSampleBuffer() {
+            let image = CMBufferHelper.imageFromSampleBuffer(sampleBuffer: sampleBuffer)
+            images.append(image)
+        }
+        
+        return images
     }
+    
+//    public func getOneFramePerSecond() -> [UIImage] {
+//        let duration: Float64 = self.duration.seconds.rounded(.up)
+//        let generator = AVAssetImageGenerator(asset:self)
+//        generator.appliesPreferredTrackTransform = true
+//        
+//        var frames: [UIImage] = []
+//        for index:Int in 0 ..< Int(duration) {
+//            let image = self.getFrame(from: generator, with: Float64(index))
+//            image.flatMap({ frames.append($0) })
+//        }
+//        
+//        return frames
+//    }
+//    
+//    private func getFrame(from generator: AVAssetImageGenerator, with time: Float64) -> UIImage? {
+//        let time: CMTime = CMTimeMakeWithSeconds(time, 1000)
+//        let image: CGImage
+//        do {
+//            try image = generator.copyCGImage(at:time, actualTime:nil)
+//        } catch {
+//            return nil
+//        }
+//        return UIImage(cgImage: image)
+//    }
 }

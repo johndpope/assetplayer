@@ -14,6 +14,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     private var assetplayer: AssetPlayer!
     private var previousStartTime: Double = 0.0
+    lazy private var playerview: PlayerView = {
+        return PlayerView(frame: CGRect(x: 200, y: 200, width: 200, height: 200))
+    }()
     
     lazy var playButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 200, width: 100, height: 100))
@@ -46,7 +49,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_1mb", withExtension: "mp4")!
+        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
         let video = VideoAsset(url: videoURL)
         
         assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
@@ -63,6 +66,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.view.addSubview(playButton)
         self.view.addSubview(pauseButton)
         self.view.addSubview(resetButton)
+        self.view.addSubview(playerview)
     }
     
     override func didReceiveMemoryWarning() {
@@ -79,7 +83,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func reset() {
-        self.assetplayer.execute(action: .seekToTimeInSeconds(time: 0.3))
+        self.assetplayer.execute(action: .seekToTimeInSeconds(time: self.previousStartTime))
     }
 }
 
@@ -89,6 +93,7 @@ extension ViewController: AssetPlayerDelegate {
     }
     
     public func playerIsSetup(_ player: AssetPlayer) {
+        self.playerview.player = player.player
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
@@ -100,7 +105,7 @@ extension ViewController: AssetPlayerDelegate {
     }
     
     public func playerCurrentTimeDidChangeInMilliseconds(_ player: AssetPlayer) {
-        self.timeLineView?.handleTracking(forTime: player.currentTime)
+        self.timeLineView?.handleTracking(startTime: player.startTimeForLoop, currentTime: player.currentTime)
     }
     
     public func playerPlaybackDidEnd(_ player: AssetPlayer) {
@@ -118,7 +123,7 @@ extension ViewController: AssetPlayerDelegate {
 
 extension ViewController: TimelineViewDelegate {
     func isScrolling() {
-        // Pause Player
+        // Pause Player when scrolling
         self.assetplayer.execute(action: .pause)
     }
     

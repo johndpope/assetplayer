@@ -86,8 +86,14 @@ public class AssetPlayer: NSObject {
     // MARK: Options
     private var isPlayingLocalAsset: Bool
     private var shouldLoop: Bool
-    private var startTimeForLoop: Double = 0
-    private var endTimeForLoop: Double? = nil
+    private var _startTimeForLoop: Double = 0
+    public var startTimeForLoop: Double {
+        return self._startTimeForLoop
+    }
+    private var _endTimeForLoop: Double? = nil
+    public var endTimeForLoop: Double? {
+        return self._endTimeForLoop
+    }
     public var isMuted: Bool {
         return self.player.isMuted
     }
@@ -507,20 +513,20 @@ extension AssetPlayer {
             self.shouldLoop = shouldLoop
         case .changeStartTimeForLoop(let time):
             guard time > 0 else {
-                self.startTimeForLoop = 0
+                self._startTimeForLoop = 0
                 return
             }
-            self.startTimeForLoop = time
+            self._startTimeForLoop = time
         case .changeEndTimeForLoop(let time):
             guard self.duration != 0 else {
                 return
             }
             
             guard time < self.duration else {
-                self.endTimeForLoop = self.duration
+                self._endTimeForLoop = self.duration
                 return
             }
-            self.endTimeForLoop = time
+            self._endTimeForLoop = time
         case .changeIsMuted(let isMuted):
             self.player.isMuted = isMuted
         }

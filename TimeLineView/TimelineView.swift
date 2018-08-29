@@ -17,14 +17,11 @@ public protocol TimelineViewDelegate: class {
 public class TimelineView: UIView {
     public weak var delegate: TimelineViewDelegate?
 
+    // @TODO: Fix optionality
     private var videoFramesScrollingView: VideoFramesScrollingView!
-
-//    public var currentTimeForLinePosition: Double {
-//        return self.videoFramesScrollingView.currentTimeForLinePosition
-//    }
+    private var cropView: CropView?
     
     private var playbackLineIndicator: PlaybackLineIndicatorView?
-    
     private var timeLineStartingPoint: CGFloat = 0
     
     override public init(frame: CGRect) {
@@ -48,6 +45,7 @@ public class TimelineView: UIView {
                                 height: self.height,
                                 center: CGPoint(x: self.bounds.midX, y: self.bounds.midY))
         cropView.changeBorderColor(to: UIColor(hexString: "#33E5E9") ?? .white)
+        self.cropView = cropView
         
         let leftRightScrollViewInset = cropView.frame.minX + cropView.layer.borderWidth
         timeLineStartingPoint = leftRightScrollViewInset
@@ -76,20 +74,24 @@ public class TimelineView: UIView {
         self.addSubview(playbackLineIndicator)
     }
     
-    public func handleTracking(forTime time: Double) {
-        let scrollView = self.videoFramesScrollingView.scrollView
-        guard !scrollView.isTracking else {
+    public func handleTracking(startTime: Double, currentTime: Double) {
+        guard let cropView = self.cropView else {
             return
         }
-        
+
+        guard !videoFramesScrollingView.isTracking else {
+            return
+        }
         guard let playbackIndicator = self.playbackLineIndicator else {
             return
         }
 
         // Calculate size per second
         let pointsPerSecond = videoFramesScrollingView.pointsPerSecond
+        let halfPlaybackIndicatorWidth = playbackIndicator.width / 2
+        let normalizedTime = currentTime - startTime
         // Calculate x scroll value
-        let x = (CGFloat(time * pointsPerSecond) + abs(scrollView.contentOffset.x)) - (playbackIndicator.width / 2)
+        let x = CGFloat(normalizedTime * pointsPerSecond) + (cropView.frame.minX + cropView.borderWidth) - halfPlaybackIndicatorWidth
         
         // Scroll playbackLineIndicator
         playbackIndicator.frame.origin.x = x
@@ -105,7 +107,7 @@ extension TimelineView: VideoFramesScrollingViewDelegate {
     internal func endScrolling() {
         delegate?.endScrolling()
         
-        let x = self.videoFramesScrollingView.scrollView.contentOffset.x + self.timeLineStartingPoint
+        let x = self.videoFramesScrollingView.contentOffset.x + self.timeLineStartingPoint
         let startTime = Double(x) / videoFramesScrollingView.pointsPerSecond
         let endTime = startTime + Constants.CropViewDurationInSeconds
         delegate?.didChangeStartAndEndTime(to: (startTime: startTime, endTime: endTime))

@@ -19,7 +19,7 @@ public class TimelineView: UIView {
 
     // @TODO: Fix optionality
     private var videoFramesScrollingView: VideoFramesScrollingView!
-    private var cropView: CropView?
+    private var cropView: TimelineCropView?
     
     private var playbackLineIndicator: PlaybackLineIndicatorView?
     private var timeLineStartingPoint: CGFloat = 0
@@ -40,7 +40,7 @@ public class TimelineView: UIView {
         let widthPerSecond = 44.4
         
         // Crop View
-        let cropView = CropView(widthPerSecond: widthPerSecond,
+        let cropView = TimelineCropView(widthPerSecond: widthPerSecond,
                                 maxVideoDurationInSeconds: maxVideoDurationInSeconds,
                                 height: self.height,
                                 center: CGPoint(x: self.bounds.midX, y: self.bounds.midY))
@@ -119,59 +119,5 @@ extension TimelineView {
         static let TimelineBackgroundColor = UIColor(hexString: "#DFE3E3") ?? .white
         static let CropViewColor = UIColor(hexString: "#33E5E9") ?? .white
         static let CropViewDurationInSeconds = 5.0
-    }
-}
-
-public class PlaybackLineIndicatorView: UIView {
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        self.backgroundColor = .clear
-        self.isUserInteractionEnabled = false
-        
-        let backgroundView = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        backgroundView.backgroundColor = Constants.BackgroundViewColor
-        backgroundView.alpha = Constants.BackgroundViewAlpha
-        self.addSubview(backgroundView)
-        
-        let centerLine = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: self.height))
-        centerLine.center = CGPoint(x: self.bounds.midX, y: self.bounds.midY)
-        centerLine.backgroundColor = Constants.CenterLineColor
-        self.addSubview(centerLine)
-    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private struct Constants {
-        static let CenterLineColor = UIColor(hexString: "#36CFD3") ?? .white
-        static let BackgroundViewColor = UIColor.white
-        static let BackgroundViewAlpha: CGFloat = 0.70
-    }
-}
-
-public class CropView: UIView {
-    required public init(widthPerSecond: Double,
-                         maxVideoDurationInSeconds: Double,
-                         height: CGFloat,
-                         center: CGPoint) {
-        let cropViewFrame = CGRect(x: 0, y: 0, width: CGFloat(widthPerSecond * maxVideoDurationInSeconds) + (Constants.BorderWidth * 2), height: height)
-        super.init(frame: cropViewFrame)
-        
-        self.layer.borderWidth = Constants.BorderWidth
-        self.isUserInteractionEnabled = false
-        self.center = center
-    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public func changeBorderColor(to color: UIColor) {
-        self.layer.borderColor = color.cgColor
-    }
-    
-    private struct Constants {
-        static let BorderWidth: CGFloat = 4
     }
 }

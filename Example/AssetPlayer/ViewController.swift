@@ -94,6 +94,8 @@ extension ViewController: AssetPlayerDelegate {
     
     public func playerIsSetup(_ player: AssetPlayer) {
         self.playerview.player = player.player
+        assetplayer.execute(action: .changeStartTimeForLoop(to: 0.0))
+        assetplayer.execute(action: .changeEndTimeForLoop(to: 5.0))
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {

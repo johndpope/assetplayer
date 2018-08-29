@@ -24,6 +24,9 @@
 		16315CD72134908700B6BD13 /* VideoExporterOrientationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CD62134908700B6BD13 /* VideoExporterOrientationHelper.swift */; };
 		16315CD9213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CD8213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift */; };
 		16315CDB2134917700B6BD13 /* PHPhotoLibraryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDA2134917700B6BD13 /* PHPhotoLibraryInterface.swift */; };
+		16315CEC21374BF700B6BD13 /* VideoFramesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CEB21374BF700B6BD13 /* VideoFramesView.swift */; };
+		16315CEE21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CED21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift */; };
+		16315CF021374C5B00B6BD13 /* TimelineCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */; };
 		16C039B8EDFD47112B2E2352ADD391F7 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53411A1B145BD747CB1083007DF5EDC /* DateExtensions.swift */; };
 		16E41B5D0B05252A73787B07E95F2275 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49150A68CD804E5F89B962995E7ED28 /* OptionalExtensions.swift */; };
 		1712A2A26026572C1A3D15FE406B738D /* ContainElementSatisfying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1272781C96F7D7953D8F0BC1A98C298D /* ContainElementSatisfying.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -77,7 +80,6 @@
 		4E9671DF4FCD537B829DCCC88D741814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDABD2BFA2B790D51B0C767B1BA7F854 /* Foundation.framework */; };
 		4FD2625D8D00DABEB20275110B9048D0 /* FailureMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A7A8D3EA1F5EEC8C84EB629FEC4F7D /* FailureMessage.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		508016277DA4F3ADB9F40F573E2E25E9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDABD2BFA2B790D51B0C767B1BA7F854 /* Foundation.framework */; };
-		512027AA11D87ADC6CA36B4A1EDBA3BC /* CoreLayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506006336A55E511F6294C69DD965D25 /* CoreLayerManager.swift */; };
 		541456855B04698506B07E78BD5822E4 /* UINavigationItemExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 118DBC12BFB342A77A0BF42972CEEF04 /* UINavigationItemExtensions.swift */; };
 		54488882CF40AF50873320F976123E88 /* SwifterSwift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C442C9D911AAD9B67FD898305EFC8926 /* SwifterSwift-dummy.m */; };
 		54720B137ECD9695CC9B9294149E1A9A /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75831E69C60F91546C95A912690E5615 /* ArrayExtensions.swift */; };
@@ -168,7 +170,6 @@
 		BAB5AE741D1CCD7F51CA110865D0F3F7 /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B34C8D8E787ABB7D56E9330C2778D6A /* CanvasView.swift */; };
 		BB5D04680992263135F92091F4212850 /* QuickSelectedTestSuiteBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF684CFEB92AC49FB2B399ED0875E03 /* QuickSelectedTestSuiteBuilder.swift */; };
 		BC448745A1F832A09FA5B353E4506630 /* UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BAF50EFF5533EEE8EED09A8D22C9FF /* UIViewControllerExtensions.swift */; };
-		BCACB008DECF2B8E3AB0C68EDB9AC8C6 /* CoreAnimationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E283CDA5E2E3CA2AC71BF53094962D /* CoreAnimationManager.swift */; };
 		BD6FC8AAD6BFBC64D66C16B4FEBD7137 /* Nimble-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 471DCC6428091BC96A11AC6086689107 /* Nimble-dummy.m */; };
 		C2A9CEADA0FC0DFD5469880BC207FC23 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FB00797EB5ED879D6E2784BB6A82BCC /* XCTest.framework */; };
 		C31496AE192BE828B8541AF268FFB07E /* AssertionRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B406EA334BA3801A77127AAD34034C77 /* AssertionRecorder.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -300,6 +301,9 @@
 		16315CD62134908700B6BD13 /* VideoExporterOrientationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporterOrientationHelper.swift; sourceTree = "<group>"; };
 		16315CD8213490A800B6BD13 /* CGAffineTransform+VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGAffineTransform+VideoExporter.swift"; sourceTree = "<group>"; };
 		16315CDA2134917700B6BD13 /* PHPhotoLibraryInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PHPhotoLibraryInterface.swift; sourceTree = "<group>"; };
+		16315CEB21374BF700B6BD13 /* VideoFramesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFramesView.swift; sourceTree = "<group>"; };
+		16315CED21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackLineIndicatorView.swift; sourceTree = "<group>"; };
+		16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCropView.swift; sourceTree = "<group>"; };
 		1689E972F3BC2C7822FAD747E3F2A00A /* ExpectationMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpectationMessage.swift; path = Sources/Nimble/ExpectationMessage.swift; sourceTree = "<group>"; };
 		1AA9019AE291609BCB2C3E85975300E7 /* Pods-AssetPlayer_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AssetPlayer_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		1C6ECD5CC30AD1D8B73E26FE0FD30CEB /* Pods-AssetPlayer_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AssetPlayer_Tests-resources.sh"; sourceTree = "<group>"; };
@@ -325,7 +329,6 @@
 		37E8AC6879D659ED5AAE84C691F8EC4C /* SKNodeExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SKNodeExtensions.swift; path = Sources/Extensions/SpriteKit/SKNodeExtensions.swift; sourceTree = "<group>"; };
 		38576BA78CF85383AFB8F8E4FC81CE7F /* Quick.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = Quick.h; path = Sources/QuickObjectiveC/Quick.h; sourceTree = "<group>"; };
 		388978FD6E2711D87E8BBD5BFC62A80B /* Pods-AssetPlayer_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-AssetPlayer_Tests-dummy.m"; sourceTree = "<group>"; };
-		38E283CDA5E2E3CA2AC71BF53094962D /* CoreAnimationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreAnimationManager.swift; sourceTree = "<group>"; };
 		390CD362CF80C6FA9592B785B47D8D3F /* Pods-AssetPlayer_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-AssetPlayer_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		3CD2B178D51C481A8FA2EE8A86F32036 /* ToSucceed.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ToSucceed.swift; path = Sources/Nimble/Matchers/ToSucceed.swift; sourceTree = "<group>"; };
 		3CE80E7D0DC329FC726C78C534435E66 /* CwlMachBadInstructionHandler.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = CwlMachBadInstructionHandler.m; path = Carthage/Checkouts/CwlPreconditionTesting/Sources/CwlMachBadInstructionHandler/CwlMachBadInstructionHandler.m; sourceTree = "<group>"; };
@@ -351,7 +354,6 @@
 		4E9D73123F34B1FFF075716AED9BAF03 /* CwlBadInstructionException.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CwlBadInstructionException.swift; path = Carthage/Checkouts/CwlPreconditionTesting/Sources/CwlPreconditionTesting/CwlBadInstructionException.swift; sourceTree = "<group>"; };
 		4F7F766BBC95CDBE0ED07821BE0549BC /* AssetPlayer.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; path = AssetPlayer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		4FD7414D433929FBE96CD823A97040E4 /* Pods-AssetPlayer_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-AssetPlayer_Example.modulemap"; sourceTree = "<group>"; };
-		506006336A55E511F6294C69DD965D25 /* CoreLayerManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CoreLayerManager.swift; sourceTree = "<group>"; };
 		50F832E145CA6001D0CAC2DA38060395 /* NMBExceptionCapture.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NMBExceptionCapture.h; path = Sources/NimbleObjectiveC/NMBExceptionCapture.h; sourceTree = "<group>"; };
 		53819CF1C13B5A672A43A0325544A850 /* IntExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = IntExtensions.swift; path = Sources/Extensions/SwiftStdlib/IntExtensions.swift; sourceTree = "<group>"; };
 		54AF08E6481C0EC498D879400BA3644D /* UISegmentedControlExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UISegmentedControlExtensions.swift; path = Sources/Extensions/UIKit/UISegmentedControlExtensions.swift; sourceTree = "<group>"; };
@@ -623,6 +625,9 @@
 			children = (
 				89773AC4644F9E07E7AD61565786264A /* TimelineView.swift */,
 				3DCEFBCB7B8DF2766ECA27F22595D9A8 /* VideoFramesScrollingView.swift */,
+				16315CEB21374BF700B6BD13 /* VideoFramesView.swift */,
+				16315CED21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift */,
+				16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */,
 			);
 			path = TimeLineView;
 			sourceTree = "<group>";
@@ -980,7 +985,6 @@
 				02D80303EE3C4DBFE046320D30B9A8E9 /* VideoAsset.swift */,
 				BB2A86851501C9DDEDB19788EF217E25 /* VideoExporter.swift */,
 				1F7E2D29E1EBEBD6A19704C9050F61DF /* VideoPlayerView.swift */,
-				FC7155C9D5657E608FF205E9687BD934 /* CoreAnimation */,
 				ED91C965D0D500C0E12B1A1504AF1D3D /* Pod */,
 				BF0780646A3185CC1E94B15EF0E7F837 /* Support Files */,
 				647B64C6029499731CF7BEBE925D7CA1 /* timeline-ui */,
@@ -1061,16 +1065,6 @@
 				A311E2CB619C4E98C5B8DDDB1D87E9EB /* README.md */,
 			);
 			name = Pod;
-			sourceTree = "<group>";
-		};
-		FC7155C9D5657E608FF205E9687BD934 /* CoreAnimation */ = {
-			isa = PBXGroup;
-			children = (
-				38E283CDA5E2E3CA2AC71BF53094962D /* CoreAnimationManager.swift */,
-				506006336A55E511F6294C69DD965D25 /* CoreLayerManager.swift */,
-			);
-			name = CoreAnimation;
-			path = AssetPlayer/Classes/CoreAnimation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1341,15 +1335,16 @@
 				87BF446B15B1A85F9B8D2052BBCA52AC /* Asset.swift in Sources */,
 				F8A8FD3612A6DD5B3B53FC033C080369 /* AssetPlayer-dummy.m in Sources */,
 				0F7CA029D11787A1F0289B1558CA4831 /* AssetPlayer.swift in Sources */,
+				16315CEC21374BF700B6BD13 /* VideoFramesView.swift in Sources */,
 				D799D8455527FD9FB1D8601C1BF6161B /* AVAssetExtensions.swift in Sources */,
+				16315CEE21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift in Sources */,
 				BAB5AE741D1CCD7F51CA110865D0F3F7 /* CanvasView.swift in Sources */,
 				AFBB8A5654B623D419E8B5F59037E069 /* CGSizeExtensions.swift in Sources */,
 				4452AE66752E57DE1002077A878E20FE /* CMBufferHelper.swift in Sources */,
-				BCACB008DECF2B8E3AB0C68EDB9AC8C6 /* CoreAnimationManager.swift in Sources */,
-				512027AA11D87ADC6CA36B4A1EDBA3BC /* CoreLayerManager.swift in Sources */,
 				F50A64C3519FA6100E0E75CD5852240F /* DraggableView.swift in Sources */,
 				CD0104A4ADEDFEC514BDA0F8B90B0756 /* FileHelpers.swift in Sources */,
 				3126C887835AC7780030D48CE247643F /* LayerContainerView.swift in Sources */,
+				16315CF021374C5B00B6BD13 /* TimelineCropView.swift in Sources */,
 				B4F4DB5B8AFE73E16796FCB8EDB9F6F4 /* VideoFramesScrollingView.swift in Sources */,
 				C6E9925D2FE100021EBCA870C303154D /* PlayerView.swift in Sources */,
 				589B32362DF2B3308F99DD9170419922 /* TimelineView.swift in Sources */,

@@ -53,7 +53,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let video = VideoAsset(url: videoURL)
         
         assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
-        assetplayer.execute(action: .setup(with: video))
+        assetplayer.handle(action: .setup(with: video))
         assetplayer.delegate = self
         
         let frame = CGRect(x: 0, y: 100, width: self.view.width, height: 72)
@@ -75,15 +75,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func play() {
-        self.assetplayer.execute(action: .play)
+        self.assetplayer.handle(action: .play)
     }
     
     @objc func pause() {
-        self.assetplayer.execute(action: .pause)
+        self.assetplayer.handle(action: .pause)
     }
     
     @objc func reset() {
-        self.assetplayer.execute(action: .seekToTimeInSeconds(time: self.previousStartTime))
+        self.assetplayer.handle(action: .seekToTimeInSeconds(time: self.previousStartTime))
     }
 }
 
@@ -94,8 +94,8 @@ extension ViewController: AssetPlayerDelegate {
     
     public func playerIsSetup(_ player: AssetPlayer) {
         self.playerview.player = player.player
-        assetplayer.execute(action: .changeStartTimeForLoop(to: 0.0))
-        assetplayer.execute(action: .changeEndTimeForLoop(to: 5.0))
+        assetplayer.handle(action: .changeStartTimeForLoop(to: 0.0))
+        assetplayer.handle(action: .changeEndTimeForLoop(to: 5.0))
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
@@ -126,7 +126,7 @@ extension ViewController: AssetPlayerDelegate {
 extension ViewController: TimelineViewDelegate {
     func isScrolling() {
         // Pause Player when scrolling
-        self.assetplayer.execute(action: .pause)
+        self.assetplayer.handle(action: .pause)
     }
     
     func endScrolling() {}
@@ -135,9 +135,9 @@ extension ViewController: TimelineViewDelegate {
         let newCurrentTime = self.getNewTimeFromOffset(currentTime: assetplayer.currentTime,
                                                        newStartTime: time.startTime,
                                                        previousStartTime: previousStartTime)
-        assetplayer.execute(action: .seekToTimeInSeconds(time: newCurrentTime))
-        assetplayer.execute(action: .changeStartTimeForLoop(to: time.startTime))
-        assetplayer.execute(action: .changeEndTimeForLoop(to: time.endTime))
+        assetplayer.handle(action: .seekToTimeInSeconds(time: newCurrentTime))
+        assetplayer.handle(action: .changeStartTimeForLoop(to: time.startTime))
+        assetplayer.handle(action: .changeEndTimeForLoop(to: time.endTime))
         
         previousStartTime = time.startTime
     }

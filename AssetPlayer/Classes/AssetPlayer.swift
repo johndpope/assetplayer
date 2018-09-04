@@ -294,6 +294,12 @@ public class AssetPlayer: NSObject {
                  */
                 self.avPlayerItem = AVPlayerItem(asset: newAsset.urlAsset)
                 self.delegate?.currentAssetDidChange(self)
+                self.delegate?.playerIsSetup(self)
+                
+                if self.state != .playing, self.state != .paused, self.state != .buffering {
+                    self.state = .none
+                }
+                
             }
         }
     }
@@ -345,14 +351,15 @@ extension AssetPlayer {
         case .buffering:
             self.player.pause()
         case .finished:
+            self.player.pause()
+            
             guard !shouldLoop else {
                 self.currentTime = startTimeForLoop
-                self.seekToTimeInSeconds(startTimeForLoop)
-                self.state = .playing
+                self.seekToTimeInSeconds(startTimeForLoop) { _ in
+                    self.state = .playing
+                }
                 return
             }
-            
-            self.player.pause()
         }
         
         self.delegate?.playerPlaybackStateDidChange(self)
@@ -367,6 +374,8 @@ extension AssetPlayer {
         }
         
         if keyPath == #keyPath(AssetPlayer.player.currentItem.duration) {
+            // @TODO: Better handle this guard
+            guard let _ = self.avPlayerItem else { return }
             // Update timeSlider and enable/disable controls when duration > 0.0
             
             /*
@@ -388,12 +397,6 @@ extension AssetPlayer {
             self.maxSecondValue = Float(newDurationSeconds)
             self.timeElapsedText = createTimeString(time: currentTime)
             self.durationText = createTimeString(time: newDurationSeconds)
-            
-            self.delegate?.playerIsSetup(self)
-            
-            if self.state != .playing, self.state != .paused, self.state != .buffering {
-                self.state = .none
-            }
         }
         else if keyPath == #keyPath(AssetPlayer.player.rate) {
             // Handle any player rate changes
@@ -495,7 +498,7 @@ extension AssetPlayer {
 
 // MARK: Playback Control Methods.
 extension AssetPlayer {
-    public func execute(action: AssetPlayerActions) {
+    public func handle(action: AssetPlayerActions) {
         switch action {
         case .setup(let asset):
             self.setup(with: asset)
@@ -504,7 +507,7 @@ extension AssetPlayer {
         case .pause:
             self.state = .paused
         case .seekToTimeInSeconds(let time):
-            self.seekToTimeInSeconds(time)
+            self.seekToTimeInSeconds(time) { _ in }
         case .changePlayerPlaybackRate(let rate):
             self.changePlayerPlaybackRate(to: rate)
         case .changeIsPlayingLocalAsset(let isPlayingLocalAsset):
@@ -550,9 +553,9 @@ extension AssetPlayer {
         let interval = CMTimeMake(1, 1)
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main) { [unowned self] time in
             guard self.state != .finished else { return }
-            
+
             let timeElapsed = time.seconds
-            
+
             self.currentTime = timeElapsed
             self.timeElapsedText = self.createTimeString(time: timeElapsed)
             
@@ -570,8 +573,7 @@ extension AssetPlayer {
             self.timeElapsedText = self.createTimeString(time: timeElapsed)
             
             self.delegate?.playerCurrentTimeDidChangeInMilliseconds(self)
-//            print(self.endTimeForLoop)
-//            print(timeElapsed)
+
             // Set finished state if we are looping and passed our loop end time
             if let endTime = self.endTimeForLoop, timeElapsed >= endTime, self.shouldLoop {
                 self.state = .finished
@@ -584,10 +586,10 @@ extension AssetPlayer {
         self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
     }
 
-    private func seekToTimeInSeconds(_ time: Double) {
+    private func seekToTimeInSeconds(_ time: Double, completion: @escaping (Bool) -> Void) {
         guard asset != nil else { return }
         let newPosition = CMTimeMakeWithSeconds(time, 1000)
-        self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
+        self.player.seek(to: newPosition, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero, completionHandler: completion)
     }
 
     private func changePlayerPlaybackRate(to newRate: Float) {

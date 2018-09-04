@@ -23,15 +23,15 @@ class MeasurementTests: XCTestCase {
         super.tearDown()
     }
     
-    func testGetAllFrames() {
-        self.measure {
-            let expectation = XCTestExpectation(description: "should get all frames")
-            
-            thirtySecondAsset.urlAsset.getAllFramesAsUIImages(completion: { (images) in
-                expectation.fulfill()
-            })
-            
-            wait(for: [expectation], timeout: 10.0)
-        }
-    }
+//    func testGetAllFrames() {
+//        self.measure {
+//            let expectation = XCTestExpectation(description: "should get all frames")
+//            
+//            thirtySecondAsset.urlAsset.getAllFramesAsUIImages(completion: { (images) in
+//                expectation.fulfill()
+//            })
+//            
+//            wait(for: [expectation], timeout: 20.0)
+//        }
+//    }
 }

@@ -34,7 +34,7 @@ class AssetPlayerSpec: QuickSpec {
             
             describe("actionable state changes") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: thirtySecondAsset))
+                    assetPlayer.handle(action: .setup(with: thirtySecondAsset))
                 }
                 
                 it("should have SETUP state") {
@@ -42,7 +42,7 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should have PLAYED state") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.playing))
                     sleep(2)
@@ -50,27 +50,52 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should have PAUSED state") {
-                    assetPlayer.execute(action: .pause)
+                    assetPlayer.handle(action: .pause)
                     
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.paused))
+                }
+                
+                it("should mute player & un-mute") {
+                    assetPlayer.handle(action: .changeIsMuted(to: true))
+                    expect(assetPlayer.isMuted).to(equal(true))
+                    
+                    assetPlayer.handle(action: .changeIsMuted(to: false))
+                    expect(assetPlayer.isMuted).to(equal(false))
+                }
+                
+                it("should change start time and end time for looping") {
+                    assetPlayer.handle(action: .changeStartTimeForLoop(to: 5.0))
+                    expect(assetPlayer.startTimeForLoop).to(equal(5.0))
+                    
+                    // @TODO: Fix hack to wait for assetplayer to setup
+                    sleep(1)
+                    // Wait, can't set end time when video is not setup
+                    waitUntil(timeout: 2, action: { (done) in
+                        sleep(1)
+                        expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.none))
+                        done()
+                    })
+                    
+                    assetPlayer.handle(action: .changeEndTimeForLoop(to: 10.0))
+                    expect(assetPlayer.endTimeForLoop).to(equal(10.0))
                 }
             }
             
             describe("finished state test") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                 }
                 
                 it("should have FINISHED state") {
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.setup(asset: fiveSecondAsset)))
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.finished), timeout: 8)
                 }
                 
                 it("should continue looping after finishing") {
-                    assetPlayer.execute(action: AssetPlayerActions.changeShouldLoop(to: true))
+                    assetPlayer.handle(action: AssetPlayerActions.changeShouldLoop(to: true))
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.setup(asset: fiveSecondAsset)))
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.playing), timeout: 8)
                 }
             }
@@ -78,7 +103,7 @@ class AssetPlayerSpec: QuickSpec {
             // @TODO: Test failure states with assets with protected content or non playable assets
             describe("failed state test") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                 }
                 
                 it("should have FAILED state") {
@@ -92,7 +117,7 @@ class AssetPlayerSpec: QuickSpec {
                 var mockAssetPlayerDelegate: MockAssetPlayerDelegate!
                 
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                     mockAssetPlayerDelegate = MockAssetPlayerDelegate(assetPlayer: assetPlayer)
                 }
                 
@@ -101,17 +126,17 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should fire delegate to set current time in seconds") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.currentTimeInSeconds).toEventually(equal(1), timeout: 2)
                 }
                 
                 it("should fire delegate to set current time in milliseconds") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.currentTimeInMilliSeconds).toEventually(equal(0.50), timeout: 1, pollInterval: 0.01)
                 }
                 
                 it("should fire playback ended delegate") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.playbackEnded).toEventually(equal(true), timeout: 7)
                 }
             }
@@ -142,7 +167,7 @@ class AssetPlayerSpec: QuickSpec {
             
             describe("actionable state changes") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: thirtySecondAsset))
+                    assetPlayer.handle(action: .setup(with: thirtySecondAsset))
                 }
                 
                 it("should have SETUP state") {
@@ -150,7 +175,7 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should have PLAYED state") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     
                     
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.playing))
@@ -159,35 +184,35 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should have PAUSED state") {
-                    assetPlayer.execute(action: .pause)
+                    assetPlayer.handle(action: .pause)
                     
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.paused))
                 }
                 
                 it("should mute player & un-mute") {
-                    assetPlayer.execute(action: .changeIsMuted(to: true))
+                    assetPlayer.handle(action: .changeIsMuted(to: true))
                     expect(assetPlayer.isMuted).to(equal(true))
                     
-                    assetPlayer.execute(action: .changeIsMuted(to: false))
+                    assetPlayer.handle(action: .changeIsMuted(to: false))
                     expect(assetPlayer.isMuted).to(equal(false))
                 }
             }
             
             describe("finished state test") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                 }
                 
                 it("should have FINISHED state") {
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.setup(asset: fiveSecondAsset)))
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.finished), timeout: minimumSetupTime + 20)
                 }
                 
                 it("should continue looping after finishing") {
-                    assetPlayer.execute(action: AssetPlayerActions.changeShouldLoop(to: true))
+                    assetPlayer.handle(action: AssetPlayerActions.changeShouldLoop(to: true))
                     expect(assetPlayer.state).to(equal(AssetPlayerPlaybackState.setup(asset: fiveSecondAsset)))
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(assetPlayer.state).toEventually(equal(AssetPlayerPlaybackState.playing), timeout: minimumSetupTime + 8)
                 }
             }
@@ -195,7 +220,7 @@ class AssetPlayerSpec: QuickSpec {
             // @TODO: Test failure states with assets with protected content or non playable assets
             describe("failed state test") {
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                 }
                 
                 it("should have FAILED state") {
@@ -209,7 +234,7 @@ class AssetPlayerSpec: QuickSpec {
                 var mockAssetPlayerDelegate: MockAssetPlayerDelegate!
                 
                 beforeEach {
-                    assetPlayer.execute(action: .setup(with: fiveSecondAsset))
+                    assetPlayer.handle(action: .setup(with: fiveSecondAsset))
                     mockAssetPlayerDelegate = MockAssetPlayerDelegate(assetPlayer: assetPlayer)
                 }
                 
@@ -218,27 +243,27 @@ class AssetPlayerSpec: QuickSpec {
                 }
                 
                 it("should fire delegate to set current time in seconds") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.currentTimeInSeconds).toEventually(equal(1), timeout: minimumSetupTime + 2)
                 }
                 
                 it("should fire delegate to set current time in milliseconds") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.currentTimeInMilliSeconds).toEventually(equal(0.50), timeout: minimumSetupTime + 2, pollInterval: 0.01)
                 }
                 
                 it("should fire playback ended delegate") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.playbackEnded).toEventually(equal(true), timeout: minimumSetupTime + 20)
                 }
    
                 it("should fire playerIsLikelyToKeepUp delegate") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.playerIsLikelyToKeepUp).toEventually(equal(true), timeout: minimumSetupTime)
                 }
                 
                 it("should fire playerBufferTimeDidChange delegate") {
-                    assetPlayer.execute(action: .play)
+                    assetPlayer.handle(action: .play)
                     expect(mockAssetPlayerDelegate.bufferTime).toEventually(beGreaterThanOrEqualTo(5.0), timeout: minimumSetupTime + 5)
                 }
             }

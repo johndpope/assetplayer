@@ -26,11 +26,16 @@ public class TimelineView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = Constants.TimelineBackgroundColor
+        setup()
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    private func setup() {
+        self.backgroundColor = Constants.TimelineBackgroundColor
     }
     
     public func setupTimeline(with video: VideoAsset) {

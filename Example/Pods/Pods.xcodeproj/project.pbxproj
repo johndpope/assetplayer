@@ -27,6 +27,8 @@
 		16315CEC21374BF700B6BD13 /* VideoFramesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CEB21374BF700B6BD13 /* VideoFramesView.swift */; };
 		16315CEE21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CED21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift */; };
 		16315CF021374C5B00B6BD13 /* TimelineCropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */; };
+		16315CF221374F2E00B6BD13 /* VideoEditorLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CF121374F2E00B6BD13 /* VideoEditorLogicController.swift */; };
+		16315CF52137511C00B6BD13 /* VideoEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CF42137511C00B6BD13 /* VideoEditorViewController.swift */; };
 		16C039B8EDFD47112B2E2352ADD391F7 /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53411A1B145BD747CB1083007DF5EDC /* DateExtensions.swift */; };
 		16E41B5D0B05252A73787B07E95F2275 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49150A68CD804E5F89B962995E7ED28 /* OptionalExtensions.swift */; };
 		1712A2A26026572C1A3D15FE406B738D /* ContainElementSatisfying.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1272781C96F7D7953D8F0BC1A98C298D /* ContainElementSatisfying.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
@@ -304,6 +306,8 @@
 		16315CEB21374BF700B6BD13 /* VideoFramesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFramesView.swift; sourceTree = "<group>"; };
 		16315CED21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackLineIndicatorView.swift; sourceTree = "<group>"; };
 		16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineCropView.swift; sourceTree = "<group>"; };
+		16315CF121374F2E00B6BD13 /* VideoEditorLogicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoEditorLogicController.swift; sourceTree = "<group>"; };
+		16315CF42137511C00B6BD13 /* VideoEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoEditorViewController.swift; sourceTree = "<group>"; };
 		1689E972F3BC2C7822FAD747E3F2A00A /* ExpectationMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpectationMessage.swift; path = Sources/Nimble/ExpectationMessage.swift; sourceTree = "<group>"; };
 		1AA9019AE291609BCB2C3E85975300E7 /* Pods-AssetPlayer_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-AssetPlayer_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		1C6ECD5CC30AD1D8B73E26FE0FD30CEB /* Pods-AssetPlayer_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-AssetPlayer_Tests-resources.sh"; sourceTree = "<group>"; };
@@ -630,6 +634,15 @@
 				16315CEF21374C5B00B6BD13 /* TimelineCropView.swift */,
 			);
 			path = TimeLineView;
+			sourceTree = "<group>";
+		};
+		16315CF3213750E900B6BD13 /* VideoEditor */ = {
+			isa = PBXGroup;
+			children = (
+				16315CF121374F2E00B6BD13 /* VideoEditorLogicController.swift */,
+				16315CF42137511C00B6BD13 /* VideoEditorViewController.swift */,
+			);
+			path = VideoEditor;
 			sourceTree = "<group>";
 		};
 		239FF904AC7476858995177DF9C87FD3 /* Nimble */ = {
@@ -973,6 +986,7 @@
 		CE908BB0D4CDA861A966936FC703A72A /* AssetPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				16315CF3213750E900B6BD13 /* VideoEditor */,
 				16315CEA213744CA00B6BD13 /* TimeLineView */,
 				D7FA51BE5FC63C9E414FCB3BE81310A8 /* Asset.swift */,
 				A2FCA548F6422FE1BC5252FBBB6642F0 /* AssetPlayer.swift */,
@@ -1337,6 +1351,8 @@
 				0F7CA029D11787A1F0289B1558CA4831 /* AssetPlayer.swift in Sources */,
 				16315CEC21374BF700B6BD13 /* VideoFramesView.swift in Sources */,
 				D799D8455527FD9FB1D8601C1BF6161B /* AVAssetExtensions.swift in Sources */,
+				16315CF221374F2E00B6BD13 /* VideoEditorLogicController.swift in Sources */,
+				16315CF52137511C00B6BD13 /* VideoEditorViewController.swift in Sources */,
 				16315CEE21374C3B00B6BD13 /* PlaybackLineIndicatorView.swift in Sources */,
 				BAB5AE741D1CCD7F51CA110865D0F3F7 /* CanvasView.swift in Sources */,
 				AFBB8A5654B623D419E8B5F59037E069 /* CGSizeExtensions.swift in Sources */,

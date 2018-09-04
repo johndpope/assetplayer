@@ -10,13 +10,9 @@
 		0C4EF575C741E1467A8EEB01 /* Pods_AssetPlayer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9063D1AFDBBF538ED88198E0 /* Pods_AssetPlayer_Tests.framework */; };
 		16315CD42130B53C00B6BD13 /* IMG_0068.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 16315CD32130B53C00B6BD13 /* IMG_0068.MOV */; };
 		16315CD52130B53C00B6BD13 /* IMG_0068.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 16315CD32130B53C00B6BD13 /* IMG_0068.MOV */; };
-		16315CDD2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */; };
 		16315CDE2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDC2134924B00B6BD13 /* AssetPlayerSpec.swift */; };
-		16315CE02134927E00B6BD13 /* VideoAssetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */; };
 		16315CE12134927E00B6BD13 /* VideoAssetSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CDF2134927E00B6BD13 /* VideoAssetSpec.swift */; };
-		16315CE3213492C600B6BD13 /* VideoExporterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */; };
 		16315CE4213492C600B6BD13 /* VideoExporterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE2213492C600B6BD13 /* VideoExporterSpec.swift */; };
-		16315CE62134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
 		16315CE72134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE52134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift */; };
 		16315CE92136FA0600B6BD13 /* MeasurementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16315CE82136FA0600B6BD13 /* MeasurementTests.swift */; };
 		165D9457212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 165D9456212E016A00F173D4 /* SampleVideo_1280x720_5mb.mp4 */; };
@@ -368,10 +364,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
-				16315CE62134934E00B6BD13 /* PHPhotoLibraryInterfaceSpec.swift in Sources */,
-				16315CE02134927E00B6BD13 /* VideoAssetSpec.swift in Sources */,
-				16315CE3213492C600B6BD13 /* VideoExporterSpec.swift in Sources */,
-				16315CDD2134924B00B6BD13 /* AssetPlayerSpec.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

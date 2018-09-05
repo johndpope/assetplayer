@@ -8,17 +8,19 @@
 
 import UIKit
 
-class DraggableView: UILabel, UIGestureRecognizerDelegate {
-    var maxScale: CGFloat = 1000
-    var minScale: CGFloat = 20
+public class DraggableView: UILabel, UIGestureRecognizerDelegate {
+    var maxScale: CGFloat = 5
+    var minScale: CGFloat = 0.5
 
     override init(frame: CGRect) {
         super.init(frame: frame);
-
         setupRecognizers()
     }
 
-    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented"); }
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setupRecognizers()
+    }
 
     // MARK: Gestures
 
@@ -50,30 +52,17 @@ class DraggableView: UILabel, UIGestureRecognizerDelegate {
         if gesture.state == .began || gesture.state == .changed {
             let translation = gesture.translation(in: self.superview!)
 
-            // @TODO: See if we need .state or not
             self.lastLocation = self.center
             self.center = CGPoint(x: self.center.x + translation.x,
                                   y: self.center.y + translation.y)
             gesture.setTranslation(CGPoint.zero, in: self)
         }
-        //        switch gesture.state {
-        //        case .began:
-        //            lastLocation = self.center
-        //            break
-        //        case .changed:
-        //            self.center = CGPoint(x: lastLocation.x + translation.x * self.transform.getScale(),
-        //                                  y: lastLocation.y + translation.y * self.transform.getScale())
-        //            break
-        //        case .ended:
-        //            gesture.setTranslation(CGPoint.zero, in: self)
-        //            break
-        //        default:
-        //            break
-        //        }
     }
 
-    // @TODO: Add larger view for pimch gesture
     @objc func didPinch(_ gesture: UIPinchGestureRecognizer) {
+        let scale = self.transform.scaledBy(x: gesture.scale, y: gesture.scale).getScale()
+        guard scale > self.minScale && scale < self.maxScale else { return }
+        
         self.transform = self.transform.scaledBy(x: gesture.scale, y: gesture.scale)
         gesture.scale = 1
     }
@@ -84,11 +73,11 @@ class DraggableView: UILabel, UIGestureRecognizerDelegate {
         gesture.rotation = 0
     }
 
-    @objc func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    @objc public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        self.superview?.bringSubview(toFront: self)
     }
 }

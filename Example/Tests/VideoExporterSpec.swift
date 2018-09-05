@@ -53,7 +53,7 @@ class VideoExporterSpec: QuickSpec {
                 let draggableViewSize = CGSize(width: 1280/(720/500), height: 500)
                 let draggableViewFrame = CGRect(origin: CGPoint(x: canvasViewFrame.midX - (draggableViewSize.width/2), y: 0),
                                                 size: draggableViewSize)
-                let finalAsset = thirtySecondAsset.withChangingFrame(to: draggableViewFrame).changeStartTime(to: 10.0).changeEndTime(to: 15.0)
+                let finalAsset = thirtySecondAsset.withChangingFrame(to: draggableViewFrame).changeStartTime(to: 10.0).changeEndTime(to: 12.5)
                 
                 it("should complete export with progress") {
                     VideoExporter.exportThemeVideo(with: finalAsset,

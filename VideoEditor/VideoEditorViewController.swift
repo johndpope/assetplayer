@@ -32,11 +32,21 @@ public enum VideoEditorVCIntentions {
 }
 
 class VideoEditorViewController: UIViewController {
-    @IBOutlet weak var playerView: PlayerView!
+    @IBOutlet weak var playerView: DraggablePlayerView!
     @IBOutlet weak var timelineView: TimelineView!
+    @IBOutlet weak var canvasView: UIView!
+    @IBOutlet weak var sendWithAudioLabel: UILabel!
+    @IBOutlet weak var playPauseButton: UIButton!
+    @IBOutlet weak var muteUnmuteButton: UIButton!
+    @IBOutlet weak var playButtonImageView: UIImageView!
+    @IBOutlet weak var muteButtonImageView: UIImageView!
+    
+    @IBOutlet weak var secondsTickView: SecondsTickView!
+    @IBOutlet weak var secondsTickViewWidthConstraint: NSLayoutConstraint!
     
     private var videoAsset: VideoAsset! = {
         let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
+//        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_2.5", withExtension: "mp4")!
         let video = VideoAsset(url: videoURL)
         return video
     }()
@@ -46,39 +56,91 @@ class VideoEditorViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.sendWithAudioLabel.text = Constants.SendWithAudioOnText
+        
         self.timelineView.delegate = self
-        self.timelineView.setupTimeline(with: self.videoAsset)
-        self.logicController = VideoEditorLogicController(playerView: self.playerView, trackingHandler: { (startTime, currentTime) in
+        
+        self.logicController = VideoEditorLogicController(setupHandler: { (assetPlayer) in
+            self.playerView.player = assetPlayer.player
+            
+            // Set player view frame to aspect fill canvas view
+            guard let size = assetPlayer.asset?.naturalAssetSize else {
+                return
+            }
+                        
+            let scaledSize = CGSize.aspectFill(aspectRatio: size, minimumSize: self.canvasView.frame.size)
+            self.playerView.frame = CGRect(origin: .zero, size: scaledSize)
+            self.playerView.center = self.canvasView.center
+        }) { (startTime, currentTime) in
             // Handle timeline tracking here
             self.timelineView.handleTracking(startTime: startTime, currentTime: currentTime)
-        })
+        }
+        
         // @TODO: fix passing in video asset
         self.logicController.handle(intent: .setup(video: self.videoAsset), stateHandler: renderHandler)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.timelineView.setupTimeline(with: self.videoAsset)
+        
+        guard let cropViewFrame = self.timelineView.cropViewFrame else {
+            return
+        }
+        let duration = self.videoAsset.cropDurationInSeconds
+        self.secondsTickView.setupWithSeconds(seconds: duration, cropViewFrame: cropViewFrame)
+        // Update width constraint because we calculate secondsTickView width in `setupWithSeconds`
+        secondsTickViewWidthConstraint.constant = self.secondsTickView.frame.width
     }
     
     func render(state: VideoEditorVCState) {
         switch state {
         case .loading:
+            // @TODO: Show loading hud here
             break
         case .playing:
             // Switch play/pause button to play
-            break
+            self.playPauseButton.isSelected = true
+            self.playButtonImageView.isHighlighted = true
         case .paused:
             // Switch play/pause button to pause
-            break
+            self.playPauseButton.isSelected = false
+            self.playButtonImageView.isHighlighted = false
         case .muted:
             // Switch mute button to muted
-            break
+            self.muteUnmuteButton.isSelected = true
+            self.muteButtonImageView.isHighlighted = true
+            
+            // Update send audio label
+            self.sendWithAudioLabel.text = Constants.SendWithAudioOffText
         case .unmuted:
             // Switch mute button to unmuted
-            break
+            self.muteUnmuteButton.isSelected = false
+            self.muteButtonImageView.isHighlighted = false
+            
+            // Update send audio label
+            self.sendWithAudioLabel.text = Constants.SendWithAudioOnText
         case .none:
             break
+        }
+    }
+    
+    @IBAction func playPauseButtonPressed(_ sender: UIButton) {
+        switch sender.isSelected {
+        case true:
+            self.logicController.handle(intent: .didTapPauseButton, stateHandler: renderHandler)
+        case false:
+            self.logicController.handle(intent: .didTapPlayButton, stateHandler: renderHandler)
+        }
+    }
+    
+    @IBAction func muteUnmuteButtonPressed(_ sender: UIButton) {
+        switch sender.isSelected {
+        case true:
+            self.logicController.handle(intent: .didTapUnmuteButton, stateHandler: renderHandler)
+        case false:
+            self.logicController.handle(intent: .didTapMuteButton, stateHandler: renderHandler)
         }
     }
 }
@@ -92,5 +154,12 @@ extension VideoEditorViewController: TimelineViewDelegate {
 
     public func didChangeStartAndEndTime(to time: (startTime: Double, endTime: Double)) {
         self.logicController.handle(intent: .didScroll(to: time), stateHandler: renderHandler)
+    }
+}
+
+extension VideoEditorViewController {
+    private struct Constants {
+        static let SendWithAudioOnText = "Send with audio on"
+        static let SendWithAudioOffText = "Send with audio off"
     }
 }

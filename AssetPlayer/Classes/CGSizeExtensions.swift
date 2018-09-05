@@ -9,6 +9,7 @@
 import UIKit
 
 public extension CGSize {
+    // @TODO: Aspect ration and minimum size/bounding size does not make sense
     public static func aspectFit(aspectRatio : CGSize, boundingSize: CGSize) -> CGSize {
         var boundingSize = boundingSize
         let mW = boundingSize.width / aspectRatio.width;

@@ -12,6 +12,13 @@ import AVFoundation
 public protocol AssetProtocol {
     /// The `AVURLAsset` corresponding to an asset in either the application bundle or on the Internet.
     var urlAsset: AVURLAsset { get }
+    var naturalAssetSize: CGSize? { get }
+}
+
+extension AssetProtocol {
+    public var naturalAssetSize: CGSize? {
+        return self.urlAsset.getFirstVideoTrack()?.naturalSize
+    }
 }
 
 // MARK: Asset
@@ -83,6 +90,10 @@ public struct VideoAsset: AssetProtocol {
     public var durationInCMTime: CMTime {
         return CMTimeMakeWithSeconds(self.duration, 600)
     }
+
+    public var cropDurationInSeconds: Double {
+        return self.duration > Constants.MaxCropDurationInSeconds ? Constants.MaxCropDurationInSeconds : self.duration
+    }
     
     public init(urlAsset: AVURLAsset,
                 timePoints: TimePoints,
@@ -128,5 +139,11 @@ public struct VideoAsset: AssetProtocol {
     
     public func withChangingFrame(to frame: CGRect) -> VideoAsset {
         return VideoAsset(urlAsset: self.urlAsset, timePoints: self.timePoints, frame: frame)
+    }
+}
+
+extension VideoAsset {
+    private struct Constants {
+        static let MaxCropDurationInSeconds = 5.0
     }
 }

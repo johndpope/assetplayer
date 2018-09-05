@@ -20,6 +20,9 @@ public class TimelineView: UIView {
     // @TODO: Fix optionality
     private var videoFramesScrollingView: VideoFramesScrollingView!
     private var cropView: TimelineCropView?
+    public var cropViewFrame: CGRect? {
+        return self.cropView?.frame
+    }
     
     private var playbackLineIndicator: PlaybackLineIndicatorView?
     private var timeLineStartingPoint: CGFloat = 0
@@ -38,15 +41,17 @@ public class TimelineView: UIView {
         self.backgroundColor = Constants.TimelineBackgroundColor
     }
     
+    private var cropDurationInSeconds: Double = 0.0
+    
+    /// Setup view. Should be done after width and height is set if using auto layout
     public func setupTimeline(with video: VideoAsset) {
-        let maxVideoDurationInSeconds = video.duration > Constants.CropViewDurationInSeconds ? Constants.CropViewDurationInSeconds : video.duration
+        self.cropDurationInSeconds = video.cropDurationInSeconds
         
-        // @TODO: calculate with calculated width * max time in seconds
-        let widthPerSecond = 44.4
+        let widthPerSecond = Double(self.width) / (320 / 43)
         
         // Crop View
         let cropView = TimelineCropView(widthPerSecond: widthPerSecond,
-                                maxVideoDurationInSeconds: maxVideoDurationInSeconds,
+                                maxVideoDurationInSeconds: self.cropDurationInSeconds,
                                 height: self.height,
                                 center: CGPoint(x: self.bounds.midX, y: self.bounds.midY))
         cropView.changeBorderColor(to: UIColor(hexString: "#33E5E9") ?? .white)
@@ -114,7 +119,7 @@ extension TimelineView: VideoFramesScrollingViewDelegate {
         
         let x = self.videoFramesScrollingView.contentOffset.x + self.timeLineStartingPoint
         let startTime = Double(x) / videoFramesScrollingView.pointsPerSecond
-        let endTime = startTime + Constants.CropViewDurationInSeconds
+        let endTime = startTime + self.cropDurationInSeconds
         delegate?.didChangeStartAndEndTime(to: (startTime: startTime, endTime: endTime))
     }
 }
@@ -123,6 +128,5 @@ extension TimelineView {
     private struct Constants {
         static let TimelineBackgroundColor = UIColor(hexString: "#DFE3E3") ?? .white
         static let CropViewColor = UIColor(hexString: "#33E5E9") ?? .white
-        static let CropViewDurationInSeconds = 5.0
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 
 public class VideoEditorLogicController {
     typealias StateHandler = (VideoEditorVCState) -> Void
+    typealias SetupHandler = (_ player: AssetPlayer) -> Void
     typealias TrackingHandler = (_ startTime: Double, _ currentTime: Double) -> Void
     
     // @TODO: Do we need video editor vc here?
@@ -18,46 +19,30 @@ public class VideoEditorLogicController {
     private var previousStartTime: Double = 0.0
     
     // Necessary evil right now because we are unable to have a callback for setting up AssetPlayer
-    private let playerView: PlayerView
+//    private let playerView: PlayerView
 //    private let timelineView: TimelineView
     
+    private var setupHandler: SetupHandler = { _ in }
     // Handler for tracking AssetPlayer playback
     private var trackingHandler: TrackingHandler = { _,_ in }
     
     init(
-        //        videoEditorViewcontroller: VideoEditorViewController,
-        //         video: VideoAsset,
-        playerView: PlayerView,
-//        timelineView: TimelineView,
-        trackingHandler: TrackingHandler?) {
-        //        self.viewController = videoEditorViewcontroller
-        self.playerView = playerView
-        //        self.timelineView = timelineView
+//        playerView: PlayerView,
+         setupHandler: SetupHandler?,
+         trackingHandler: TrackingHandler?) {
+//        self.playerView = playerView
         
         assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
         assetplayer.delegate = self
+        
+        if let handler = setupHandler {
+            self.setupHandler = handler
+        }
         
         if let handler = trackingHandler {
             self.trackingHandler = handler
         }
     }
-    
-//    public func play() {
-//        self.assetplayer.execute(action: .play)
-//    }
-//
-//    public func pause() {
-//        self.assetplayer.execute(action: .pause)
-//    }
-//
-//    public func reset() {
-//        self.assetplayer.execute(action: .seekToTimeInSeconds(time: self.previousStartTime))
-//    }
-    
-//    func setup(video: VideoAsset, stateHandler: @escaping StateHandler) {
-//        assetplayer.execute(action: .setup(with: video))
-//        stateHandler(.loading)
-//    }
     
     func handle(intent: VideoEditorVCIntentions, stateHandler: @escaping StateHandler) {
         switch intent {
@@ -109,9 +94,10 @@ extension VideoEditorLogicController: AssetPlayerDelegate {
     }
     
     public func playerIsSetup(_ player: AssetPlayer) {
-        self.playerView.player = player.player
         assetplayer.handle(action: .changeStartTimeForLoop(to: 0.0))
         assetplayer.handle(action: .changeEndTimeForLoop(to: 5.0))
+        
+        setupHandler(player)
     }
     
     public func playerPlaybackStateDidChange(_ player: AssetPlayer) {

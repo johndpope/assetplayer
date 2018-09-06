@@ -75,7 +75,7 @@ class VideoAssetSpec: QuickSpec {
                         images = returnedImages
                     })
                     
-                    expect(images?.count).toEventually(equal(739), timeout: 8.0)
+                    expect(images?.count).toEventually(equal(739), timeout: 17.0)
                 }
                 
                 it("should get all frames for fiveSecondAsset") {
@@ -85,6 +85,17 @@ class VideoAssetSpec: QuickSpec {
                         images = returnedImages
                     })
                     expect(images?.count).toEventually(equal(132), timeout: 3.0)
+                }
+                
+                it("should get all frames incrementally for thirtySecondAsset") {
+                    var images: [UIImage]?
+                    
+                    let firstSetOfImages = thirtySecondAsset.urlAsset.getAllFramesIncrementally(initialFramesDurationInSeconds: 5.0, completion: { (returnedImages) in
+                        images = returnedImages
+                    })
+                    
+                    expect(firstSetOfImages?.count).toEventually(equal(125), timeout: 3.0)
+                    expect(images?.count).toEventually(equal(739), timeout: 20.0)
                 }
             }
         }

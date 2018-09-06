@@ -8,31 +8,22 @@
 import Foundation
 
 public class VideoEditorLogicController {
-    typealias StateHandler = (VideoEditorVCState) -> Void
-    typealias SetupHandler = (_ player: AssetPlayer) -> Void
-    typealias TrackingHandler = (_ startTime: Double, _ currentTime: Double) -> Void
-    
-    // @TODO: Do we need video editor vc here?
-//    let viewController: VideoEditorViewController
+    public typealias StateHandler = (VideoEditorVCState) -> Void
+    public typealias SetupHandler = (_ player: AssetPlayer) -> Void
+    public typealias TrackingHandler = (_ startTime: Double, _ currentTime: Double) -> Void
     
     private let assetplayer: AssetPlayer
     private var previousStartTime: Double = 0.0
     
-    // Necessary evil right now because we are unable to have a callback for setting up AssetPlayer
-//    private let playerView: PlayerView
-//    private let timelineView: TimelineView
-    
-    private var setupHandler: SetupHandler = { _ in }
+    public var setupHandler: SetupHandler = { _ in }
     // Handler for tracking AssetPlayer playback
-    private var trackingHandler: TrackingHandler = { _,_ in }
+    public var trackingHandler: TrackingHandler = { _,_ in }
+    public var stateHandler: StateHandler = { _ in }
     
-    init(
-//        playerView: PlayerView,
-         setupHandler: SetupHandler?,
-         trackingHandler: TrackingHandler?) {
-//        self.playerView = playerView
-        
-        assetplayer = AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
+    public init(assetPlayer: AssetPlayer = AssetPlayer.defaultLocalPlayer,
+                setupHandler: SetupHandler?,
+                trackingHandler: TrackingHandler?) {
+        assetplayer = assetPlayer
         assetplayer.delegate = self
         
         if let handler = setupHandler {
@@ -44,28 +35,29 @@ public class VideoEditorLogicController {
         }
     }
     
-    func handle(intent: VideoEditorVCIntentions, stateHandler: @escaping StateHandler) {
+    public func handle(intent: VideoEditorVCIntentions, stateHandler: @escaping StateHandler) {
+        self.stateHandler = stateHandler
+        
         switch intent {
         case .setup(let video):
+            self.stateHandler(.loading)
             assetplayer.handle(action: .setup(with: video))
-            stateHandler(.loading)
         case .didTapPauseButton:
             self.assetplayer.handle(action: .pause)
-            stateHandler(.paused)
+            self.stateHandler(.paused)
         case .didTapPlayButton:
             self.assetplayer.handle(action: .play)
-            stateHandler(.playing)
+            self.stateHandler(.playing)
         case .didTapMuteButton:
             self.assetplayer.handle(action: .changeIsMuted(to: true))
-            stateHandler(.muted)
+            self.stateHandler(.muted)
         case .didTapUnmuteButton:
             self.assetplayer.handle(action: .changeIsMuted(to: false))
-            stateHandler(.unmuted)
+            self.stateHandler(.unmuted)
         case .didStartScrolling:
             self.assetplayer.handle(action: .pause)
-            stateHandler(.paused)
+            self.stateHandler(.paused)
         case .didScroll(let time):
-            // @TODO: check if hitting handle many times causes issues
             self.assetplayer.handle(action: .pause)
             let newCurrentTime = self.getNewTimeFromOffset(currentTime: assetplayer.currentTime,
                                                            newStartTime: time.startTime,
@@ -75,10 +67,10 @@ public class VideoEditorLogicController {
             assetplayer.handle(action: .changeEndTimeForLoop(to: time.endTime))
             
             previousStartTime = time.startTime
-            stateHandler(.paused)
-        case .didTapContinueButton:
+            self.stateHandler(.paused)
+        case .didTapContinueButton(let videoAsset, let cropViewFrame):
             // @TODO: handle continueing with flow controller
-            break
+            self.stateHandler(.loading)
         }
     }
     
@@ -89,38 +81,27 @@ public class VideoEditorLogicController {
 }
 
 extension VideoEditorLogicController: AssetPlayerDelegate {
-    public func currentAssetDidChange(_ player: AssetPlayer) {
-        
-    }
+    public func currentAssetDidChange(_ player: AssetPlayer) {}
     
     public func playerIsSetup(_ player: AssetPlayer) {
         assetplayer.handle(action: .changeStartTimeForLoop(to: 0.0))
         assetplayer.handle(action: .changeEndTimeForLoop(to: 5.0))
         
         setupHandler(player)
+        stateHandler(.paused)
     }
     
-    public func playerPlaybackStateDidChange(_ player: AssetPlayer) {
-        
-    }
+    public func playerPlaybackStateDidChange(_ player: AssetPlayer) {}
     
-    public func playerCurrentTimeDidChange(_ player: AssetPlayer) {
-        
-    }
+    public func playerCurrentTimeDidChange(_ player: AssetPlayer) {}
     
     public func playerCurrentTimeDidChangeInMilliseconds(_ player: AssetPlayer) {
         self.trackingHandler(player.startTimeForLoop, player.currentTime)
     }
     
-    public func playerPlaybackDidEnd(_ player: AssetPlayer) {
-        
-    }
+    public func playerPlaybackDidEnd(_ player: AssetPlayer) {}
     
-    public func playerIsLikelyToKeepUp(_ player: AssetPlayer) {
-        
-    }
+    public func playerIsLikelyToKeepUp(_ player: AssetPlayer) {}
     
-    public func playerBufferTimeDidChange(_ player: AssetPlayer) {
-        
-    }
+    public func playerBufferTimeDidChange(_ player: AssetPlayer) {}
 }

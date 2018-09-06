@@ -93,29 +93,4 @@ extension AVAsset {
         
         return images
     }
-    
-//    public func getOneFramePerSecond() -> [UIImage] {
-//        let duration: Float64 = self.duration.seconds.rounded(.up)
-//        let generator = AVAssetImageGenerator(asset:self)
-//        generator.appliesPreferredTrackTransform = true
-//        
-//        var frames: [UIImage] = []
-//        for index:Int in 0 ..< Int(duration) {
-//            let image = self.getFrame(from: generator, with: Float64(index))
-//            image.flatMap({ frames.append($0) })
-//        }
-//        
-//        return frames
-//    }
-//    
-//    private func getFrame(from generator: AVAssetImageGenerator, with time: Float64) -> UIImage? {
-//        let time: CMTime = CMTimeMakeWithSeconds(time, 1000)
-//        let image: CGImage
-//        do {
-//            try image = generator.copyCGImage(at:time, actualTime:nil)
-//        } catch {
-//            return nil
-//        }
-//        return UIImage(cgImage: image)
-//    }
 }

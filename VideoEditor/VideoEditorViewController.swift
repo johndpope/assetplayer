@@ -28,13 +28,14 @@ public enum VideoEditorVCIntentions {
     case didTapUnmuteButton
     case didStartScrolling
     case didScroll(to: (startTime: Double, endTime: Double))
-    case didTapContinueButton
+    case didTapContinueButton(videoAsset: VideoAsset, cropViewFrame: CGRect)
 }
 
 class VideoEditorViewController: UIViewController {
     @IBOutlet weak var playerView: DraggablePlayerView!
     @IBOutlet weak var timelineView: TimelineView!
     @IBOutlet weak var canvasView: UIView!
+    @IBOutlet weak var cropView: UIView!
     @IBOutlet weak var sendWithAudioLabel: UILabel!
     @IBOutlet weak var playPauseButton: UIButton!
     @IBOutlet weak var muteUnmuteButton: UIButton!
@@ -44,6 +45,7 @@ class VideoEditorViewController: UIViewController {
     @IBOutlet weak var secondsTickView: SecondsTickView!
     @IBOutlet weak var secondsTickViewWidthConstraint: NSLayoutConstraint!
     
+    // @TODO: fix passing in video asset
     private var videoAsset: VideoAsset! = {
         let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_1280x720_5mb", withExtension: "mp4")!
 //        let videoURL: URL = Bundle.main.url(forResource: "SampleVideo_2.5", withExtension: "mp4")!
@@ -71,10 +73,10 @@ class VideoEditorViewController: UIViewController {
             let scaledSize = CGSize.aspectFill(aspectRatio: size, minimumSize: self.canvasView.frame.size)
             self.playerView.frame = CGRect(origin: .zero, size: scaledSize)
             self.playerView.center = self.canvasView.center
-        }) { (startTime, currentTime) in
+        }, trackingHandler: { (startTime, currentTime) in
             // Handle timeline tracking here
             self.timelineView.handleTracking(startTime: startTime, currentTime: currentTime)
-        }
+        })
         
         // @TODO: fix passing in video asset
         self.logicController.handle(intent: .setup(video: self.videoAsset), stateHandler: renderHandler)
@@ -98,6 +100,7 @@ class VideoEditorViewController: UIViewController {
         switch state {
         case .loading:
             // @TODO: Show loading hud here
+            // @TODO: Hide loading hud everywhere else
             break
         case .playing:
             // Switch play/pause button to play
@@ -127,21 +130,19 @@ class VideoEditorViewController: UIViewController {
     }
     
     @IBAction func playPauseButtonPressed(_ sender: UIButton) {
-        switch sender.isSelected {
-        case true:
-            self.logicController.handle(intent: .didTapPauseButton, stateHandler: renderHandler)
-        case false:
-            self.logicController.handle(intent: .didTapPlayButton, stateHandler: renderHandler)
-        }
+        let intent: VideoEditorVCIntentions = sender.isSelected ? .didTapPauseButton : .didTapPlayButton
+        self.logicController.handle(intent: intent, stateHandler: renderHandler)
     }
     
     @IBAction func muteUnmuteButtonPressed(_ sender: UIButton) {
-        switch sender.isSelected {
-        case true:
-            self.logicController.handle(intent: .didTapUnmuteButton, stateHandler: renderHandler)
-        case false:
-            self.logicController.handle(intent: .didTapMuteButton, stateHandler: renderHandler)
-        }
+        let intent: VideoEditorVCIntentions = sender.isSelected ? .didTapUnmuteButton : .didTapMuteButton
+        self.logicController.handle(intent: intent, stateHandler: renderHandler)
+    }
+    
+    @IBAction func continueButtonPressed(_ sender: UIButton) {
+        let assetWithUpdatedFrame = self.videoAsset.withChangingFrame(to: self.playerView.frame)
+        let intent = VideoEditorVCIntentions.didTapContinueButton(videoAsset: assetWithUpdatedFrame, cropViewFrame: self.cropView.frame)
+        self.logicController.handle(intent: intent, stateHandler: renderHandler)
     }
 }
 

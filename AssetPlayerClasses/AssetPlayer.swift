@@ -77,9 +77,17 @@ extension AssetPlayer {
             "hasProtectedContent"
         ]
     }
+    
+    public static var defaultLocalPlayer: AssetPlayer {
+        return AssetPlayer(isPlayingLocalAsset: true, shouldLoop: true)
+    }
+    
+    public static var defaultRemotePlayer: AssetPlayer {
+        return AssetPlayer(isPlayingLocalAsset: false, shouldLoop: true)
+    }
 }
 
-public class AssetPlayer: NSObject {
+open class AssetPlayer: NSObject {
     /// Player delegate.
     public weak var delegate: AssetPlayerDelegate?
     
@@ -208,6 +216,8 @@ public class AssetPlayer: NSObject {
         }
     }
     
+    public var playerObserversSetup = false
+    
     // MARK: - Life Cycle
     public init(isPlayingLocalAsset: Bool, shouldLoop: Bool) {
         self.state = .none
@@ -230,9 +240,11 @@ public class AssetPlayer: NSObject {
         player.pause()
 
         //@TODO: Simplify removing observers
-        removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.duration), context: &AssetPlayerKVOContext)
-        removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.rate), context: &AssetPlayerKVOContext)
-        removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.status), context: &AssetPlayerKVOContext)
+        if (playerObserversSetup) {
+            removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.duration), context: &AssetPlayerKVOContext)
+            removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.rate), context: &AssetPlayerKVOContext)
+            removeObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.status), context: &AssetPlayerKVOContext)
+        }
 
         if avPlayerItem != nil {
             self.removePlayerItemObservers()
@@ -304,6 +316,44 @@ public class AssetPlayer: NSObject {
         }
     }
     
+    // MARK: Playback Control Methods.
+    open func handle(action: AssetPlayerActions) {
+        switch action {
+        case .setup(let asset):
+            self.setup(with: asset)
+        case .play:
+            self.state = .playing
+        case .pause:
+            self.state = .paused
+        case .seekToTimeInSeconds(let time):
+            self.seekToTimeInSeconds(time) { _ in }
+        case .changePlayerPlaybackRate(let rate):
+            self.changePlayerPlaybackRate(to: rate)
+        case .changeIsPlayingLocalAsset(let isPlayingLocalAsset):
+            self.isPlayingLocalAsset = isPlayingLocalAsset
+        case .changeShouldLoop(let shouldLoop):
+            self.shouldLoop = shouldLoop
+        case .changeStartTimeForLoop(let time):
+            guard time > 0 else {
+                self._startTimeForLoop = 0
+                return
+            }
+            self._startTimeForLoop = time
+        case .changeEndTimeForLoop(let time):
+            guard self.duration != 0 else {
+                return
+            }
+            
+            guard time < self.duration else {
+                self._endTimeForLoop = self.duration
+                return
+            }
+            self._endTimeForLoop = time
+        case .changeIsMuted(let isMuted):
+            self.player.isMuted = isMuted
+        }
+    }
+    
     // MARK: Time Formatting
     /*
      A formatter for individual date components used to provide an appropriate
@@ -366,7 +416,7 @@ extension AssetPlayer {
     }
     
     // MARK: - KVO Observation
-    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         // Make sure the this KVO callback was intended for this view controller.
         guard context == &AssetPlayerKVOContext else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
@@ -480,7 +530,7 @@ extension AssetPlayer {
     }
     
     // Trigger KVO for anyone observing our properties affected by player and player.currentItem
-    override public class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
+    override open class func keyPathsForValuesAffectingValue(forKey key: String) -> Set<String> {
         let affectedKeyPathsMappingByKey: [String: Set<String>] = [
             "duration":     [#keyPath(AssetPlayer.player.currentItem.duration)],
             "rate":         [#keyPath(AssetPlayer.player.rate)]
@@ -496,45 +546,7 @@ extension AssetPlayer {
     }
 }
 
-// MARK: Playback Control Methods.
 extension AssetPlayer {
-    public func handle(action: AssetPlayerActions) {
-        switch action {
-        case .setup(let asset):
-            self.setup(with: asset)
-        case .play:
-            self.state = .playing
-        case .pause:
-            self.state = .paused
-        case .seekToTimeInSeconds(let time):
-            self.seekToTimeInSeconds(time) { _ in }
-        case .changePlayerPlaybackRate(let rate):
-            self.changePlayerPlaybackRate(to: rate)
-        case .changeIsPlayingLocalAsset(let isPlayingLocalAsset):
-            self.isPlayingLocalAsset = isPlayingLocalAsset
-        case .changeShouldLoop(let shouldLoop):
-            self.shouldLoop = shouldLoop
-        case .changeStartTimeForLoop(let time):
-            guard time > 0 else {
-                self._startTimeForLoop = 0
-                return
-            }
-            self._startTimeForLoop = time
-        case .changeEndTimeForLoop(let time):
-            guard self.duration != 0 else {
-                return
-            }
-            
-            guard time < self.duration else {
-                self._endTimeForLoop = self.duration
-                return
-            }
-            self._endTimeForLoop = time
-        case .changeIsMuted(let isMuted):
-            self.player.isMuted = isMuted
-        }
-    }
-    
     private func setup(with asset: AssetProtocol) {
         /*
          Update the UI when these player properties change.
@@ -546,6 +558,7 @@ extension AssetPlayer {
         addObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.duration), options: [.new, .initial], context: &AssetPlayerKVOContext)
         addObserver(self, forKeyPath: #keyPath(AssetPlayer.player.rate), options: [.new, .initial], context: &AssetPlayerKVOContext)
         addObserver(self, forKeyPath: #keyPath(AssetPlayer.player.currentItem.status), options: [.new, .initial], context: &AssetPlayerKVOContext)
+        self.playerObserversSetup = true
         
         self.state = .setup(asset: asset)
         

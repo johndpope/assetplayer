@@ -23,7 +23,7 @@ class VideoExporterSpec: QuickSpec {
         }
         
         var verticalVideoWithPortraitOrientation: VideoAsset {
-            return VideoAsset(url: Bundle.main.url(forResource: "IMG_0068", withExtension: "MOV")!)
+            return VideoAsset(url: Bundle.main.url(forResource: "vertical_video", withExtension: "MOV")!)
         }
         
         xdescribe("video exporter") {
